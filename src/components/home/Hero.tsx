@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white -mt-[120px] pt-[120px]">
+    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Hero background image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -16,7 +16,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
       
-      <div className="relative container mx-auto px-4 py-20 text-center">
+      <div className="relative container mx-auto px-4 pt-40 pb-20 text-center">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
           Find the <span className="text-orange-500">Perfect Parts</span><br />
           for Your Vehicle
