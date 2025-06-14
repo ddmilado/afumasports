@@ -3,17 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, User, Settings, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
-  // Mock authentication state - in real app this would come from auth context
-  const isAuthenticated = false;
+  const { user } = useAuth();
 
   return (
     <header className="bg-slate-900 text-white shadow-lg">
       {/* Top bar */}
       <div className="bg-slate-800 py-2">
         <div className="container mx-auto px-4 text-sm text-gray-300 text-center">
-          Free shipping on orders over $150 | Call us: 1-800-AUTO-PARTS
+          Free shipping on orders over ₼550 | Call us: 1-800-AUTO-PARTS
         </div>
       </div>
       
@@ -45,13 +45,24 @@ const Header = () => {
           
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
-              <Link to="/account">
-                <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
-                  <User className="w-5 h-5 mr-2" />
-                  Account
-                </Button>
-              </Link>
+            {user ? (
+              <>
+                <Link to="/account">
+                  <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
+                    <User className="w-5 h-5 mr-2" />
+                    Account
+                  </Button>
+                </Link>
+                <Link to="/cart">
+                  <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Cart
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      0
+                    </span>
+                  </Button>
+                </Link>
+              </>
             ) : (
               <Link to="/auth">
                 <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
@@ -60,15 +71,6 @@ const Header = () => {
                 </Button>
               </Link>
             )}
-            <Link to="/cart">
-              <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                Cart
-                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
-              </Button>
-            </Link>
           </div>
         </div>
         
