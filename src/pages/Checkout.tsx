@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,10 +25,10 @@ const Checkout = () => {
     }
   ];
 
-  const subtotal = 225.97;
-  const shipping = 0;
-  const tax = 18.08;
-  const total = 244.05;
+  const subtotal: number = 225.97;
+  const shipping: number = 0;
+  const tax: number = 18.08;
+  const total: number = 244.05;
 
   return (
     <div className="min-h-screen bg-gray-50">
