@@ -2,11 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, User, Settings, LogIn } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState, FormEvent } from "react";
 
 const Header = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-sm text-white shadow-lg">
@@ -33,14 +44,21 @@ const Header = () => {
           
           {/* Search bar */}
           <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
                 placeholder="Search parts by name, part number, or vehicle..."
                 className="pl-10 pr-4 py-3 w-full bg-white/90 text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-            </div>
+              <button 
+                type="submit"
+                className="absolute left-3 top-3.5 h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
           </div>
           
           {/* Actions */}

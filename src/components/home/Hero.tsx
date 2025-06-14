@@ -1,8 +1,33 @@
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedMake, setSelectedMake] = useState("");
+  const [selectedModel, setSelectedModel] = useState("");
+
+  const handleFindParts = () => {
+    // Navigate to products page with vehicle filters
+    const params = new URLSearchParams();
+    if (selectedYear) params.append('year', selectedYear);
+    if (selectedMake) params.append('make', selectedMake);
+    if (selectedModel) params.append('model', selectedModel);
+    
+    navigate(`/products?${params.toString()}`);
+  };
+
+  const handleShopNow = () => {
+    navigate('/products');
+  };
+
+  const handleViewCatalog = () => {
+    navigate('/products');
+  };
+
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Hero background image */}
@@ -29,31 +54,46 @@ const Hero = () => {
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto mb-8">
           <h3 className="text-lg font-semibold mb-4">Find Parts for Your Vehicle</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <select className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500">
-              <option>Select Year</option>
-              <option>2024</option>
-              <option>2023</option>
-              <option>2022</option>
-              <option>2021</option>
-              <option>2020</option>
+            <select 
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            >
+              <option value="">Select Year</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
             </select>
-            <select className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500">
-              <option>Select Make</option>
-              <option>Toyota</option>
-              <option>Honda</option>
-              <option>Ford</option>
-              <option>Chevrolet</option>
-              <option>BMW</option>
+            <select 
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              value={selectedMake}
+              onChange={(e) => setSelectedMake(e.target.value)}
+            >
+              <option value="">Select Make</option>
+              <option value="Toyota">Toyota</option>
+              <option value="Honda">Honda</option>
+              <option value="Ford">Ford</option>
+              <option value="Chevrolet">Chevrolet</option>
+              <option value="BMW">BMW</option>
             </select>
-            <select className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500">
-              <option>Select Model</option>
-              <option>Camry</option>
-              <option>Civic</option>
-              <option>F-150</option>
-              <option>Silverado</option>
-              <option>3 Series</option>
+            <select 
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+            >
+              <option value="">Select Model</option>
+              <option value="Camry">Camry</option>
+              <option value="Civic">Civic</option>
+              <option value="F-150">F-150</option>
+              <option value="Silverado">Silverado</option>
+              <option value="3 Series">3 Series</option>
             </select>
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3">
+            <Button 
+              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
+              onClick={handleFindParts}
+            >
               <Search className="w-4 h-4 mr-2" />
               Find Parts
             </Button>
@@ -61,13 +101,18 @@ const Hero = () => {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3">
+          <Button 
+            size="lg" 
+            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3"
+            onClick={handleShopNow}
+          >
             Shop Now
           </Button>
           <Button 
             size="lg" 
             variant="outline" 
             className="border-white text-white hover:bg-white hover:text-slate-900 px-8 py-3"
+            onClick={handleViewCatalog}
           >
             View Catalog
           </Button>
