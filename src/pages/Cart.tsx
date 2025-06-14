@@ -1,55 +1,20 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, ArrowLeft } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Premium Brake Pad Set",
-      brand: "AcmeParts",
-      partNumber: "BP-2024-PRO",
-      price: 89.99,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=150&h=150&fit=crop"
-    },
-    {
-      id: 2,
-      name: "High-Flow Air Filter",
-      brand: "FlowMax",
-      partNumber: "AF-3021-HF",
-      price: 45.99,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=150&h=150&fit=crop"
-    }
-  ]);
+  const { state: cartState, updateQuantity, removeItem } = useCart();
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity === 0) {
-      removeItem(id);
-      return;
-    }
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartState.total;
   const shipping = subtotal > 150 ? 0 : 15.99;
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
 
-  if (cartItems.length === 0) {
+  if (cartState.items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -91,11 +56,11 @@ const Cart = () => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6 border-b">
-                <h2 className="text-lg font-semibold">Cart Items ({cartItems.length})</h2>
+                <h2 className="text-lg font-semibold">Cart Items ({cartState.items.length})</h2>
               </div>
               
               <div className="divide-y">
-                {cartItems.map((item) => (
+                {cartState.items.map((item) => (
                   <div key={item.id} className="p-6 flex items-center space-x-4">
                     <img
                       src={item.image}

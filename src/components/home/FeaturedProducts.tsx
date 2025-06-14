@@ -3,10 +3,27 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 
 const FeaturedProducts = () => {
   const { data: products, isLoading, error } = useFeaturedProducts();
+  const { addItem } = useCart();
   const navigate = useNavigate();
+
+  const handleAddToCart = (product: any) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      partNumber: product.part_number,
+      price: product.price,
+      image: product.image_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop',
+      inStock: product.in_stock
+    });
+    
+    toast.success(`${product.name} added to cart!`);
+  };
 
   if (isLoading) {
     return (
@@ -104,6 +121,7 @@ const FeaturedProducts = () => {
                 <Button 
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                   disabled={!product.in_stock}
+                  onClick={() => handleAddToCart(product)}
                 >
                   <ShoppingCart className="w-4 h-4 mr-2" />
                   {product.in_stock ? 'Add to Cart' : 'Out of Stock'}

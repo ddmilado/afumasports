@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, User, Settings, LogIn } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { useState, FormEvent } from "react";
 
 const Header = () => {
   const { user } = useAuth();
+  const { state: cartState } = useCart();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,19 +77,34 @@ const Header = () => {
                   <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
                     <ShoppingCart className="w-5 h-5 mr-2" />
                     Cart
-                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      0
-                    </span>
+                    {cartState.itemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {cartState.itemCount}
+                      </span>
+                    )}
                   </Button>
                 </Link>
               </>
             ) : (
-              <Link to="/auth">
-                <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
-                  <LogIn className="w-5 h-5 mr-2" />
-                  Sign In
-                </Button>
-              </Link>
+              <>
+                <Link to="/cart">
+                  <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Cart
+                    {cartState.itemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {cartState.itemCount}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
+                    <LogIn className="w-5 h-5 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+              </>
             )}
           </div>
         </div>

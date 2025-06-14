@@ -1,19 +1,21 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
   // Mock product data
   const product = {
-    id: 1,
+    id: id || "1",
     name: "Premium Brake Pad Set",
     brand: "AcmeParts",
     partNumber: "BP-2024-PRO",
@@ -45,6 +47,22 @@ const ProductDetail = () => {
       "Extended pad life",
       "OEM quality construction"
     ]
+  };
+
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        partNumber: product.partNumber,
+        price: product.price,
+        image: product.images[0],
+        inStock: product.inStock
+      });
+    }
+    
+    toast.success(`${quantity} x ${product.name} added to cart!`);
   };
 
   return (
@@ -145,7 +163,11 @@ const ProductDetail = () => {
                 </button>
               </div>
               
-              <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3">
+              <Button 
+                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3"
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+              >
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Add to Cart
               </Button>

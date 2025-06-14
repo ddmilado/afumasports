@@ -1,34 +1,54 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, Lock, Truck } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 const Checkout = () => {
+  const { user, loading } = useAuth();
+  const { state: cartState } = useCart();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
-  const orderItems = [
-    {
-      id: 1,
-      name: "Premium Brake Pad Set",
-      quantity: 2,
-      price: 89.99
-    },
-    {
-      id: 2,
-      name: "High-Flow Air Filter",
-      quantity: 1,
-      price: 45.99
+  useEffect(() => {
+    if (!loading && !user) {
+      toast.error("You must be signed in to checkout. Please sign in to continue.");
+      navigate("/auth");
     }
-  ];
+  }, [user, loading, navigate]);
 
-  const subtotal: number = 225.97;
-  const shipping: number = 0;
-  const tax: number = 18.08;
-  const total: number = 244.05;
+  useEffect(() => {
+    if (cartState.items.length === 0) {
+      navigate("/cart");
+    }
+  }, [cartState.items.length, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to auth page
+  }
+
+  const subtotal = cartState.total;
+  const shipping = subtotal > 150 ? 0 : 15.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,7 +95,7 @@ const Checkout = () => {
                     
                     <div>
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" required />
+                      <Input id="email" type="email" required value={user.email || ''} readOnly className="bg-gray-50" />
                     </div>
                     
                     <div>
@@ -122,7 +142,7 @@ const Checkout = () => {
                         <div className="font-medium">Standard Shipping (5-7 days)</div>
                         <div className="text-sm text-gray-500">Free for orders over $150</div>
                       </div>
-                      <div className="font-bold">Free</div>
+                      <div className="font-bold">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</div>
                     </label>
                     
                     <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
@@ -216,7 +236,7 @@ const Checkout = () => {
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
               
               <div className="space-y-3 mb-6">
-                {orderItems.map((item) => (
+                {cartState.items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.name} (x{item.quantity})</span>
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
