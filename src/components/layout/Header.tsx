@@ -1,10 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, User, Settings } from "lucide-react";
+import { Search, ShoppingCart, User, Settings, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
+  // Mock authentication state - in real app this would come from auth context
+  const isAuthenticated = false;
+
   return (
     <header className="bg-slate-900 text-white shadow-lg">
       {/* Top bar */}
@@ -42,17 +45,30 @@ const Header = () => {
           
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
-              <User className="w-5 h-5 mr-2" />
-              Account
-            </Button>
-            <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              Cart
-              <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            {isAuthenticated ? (
+              <Link to="/account">
+                <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
+                  <User className="w-5 h-5 mr-2" />
+                  Account
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="sm" className="text-white hover:text-orange-500">
+                  <LogIn className="w-5 h-5 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
+            <Link to="/cart">
+              <Button variant="ghost" size="sm" className="text-white hover:text-orange-500 relative">
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                Cart
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  0
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
         
