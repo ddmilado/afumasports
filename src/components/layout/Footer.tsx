@@ -1,8 +1,75 @@
 
 import { Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert([{ email }]);
+
+      if (error) {
+        // Check if it's a duplicate email error
+        if (error.code === '23505') {
+          toast({
+            title: "Already Subscribed",
+            description: "This email is already subscribed to our newsletter.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Successfully Subscribed!",
+          description: "Thank you for subscribing to our newsletter. You'll receive the latest deals and automotive tips.",
+        });
+        setEmail("");
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Subscription Failed",
+        description: "There was an error subscribing to the newsletter. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-slate-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -58,16 +125,23 @@ const Footer = () => {
             <p className="text-gray-400 mb-4">
               Get the latest deals, new arrivals, and automotive tips delivered to your inbox.
             </p>
-            <div className="flex">
+            <form onSubmit={handleNewsletterSubmit} className="flex">
               <input
                 type="email"
                 placeholder="Your email"
-                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-l-md focus:outline-none focus:border-orange-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-l-md focus:outline-none focus:border-orange-500 disabled:opacity-50"
               />
-              <button className="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-r-md transition-colors">
-                Subscribe
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-r-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "..." : "Subscribe"}
               </button>
-            </div>
+            </form>
           </div>
         </div>
         
