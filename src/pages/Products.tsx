@@ -8,6 +8,8 @@ import Footer from "@/components/layout/Footer";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import FavoriteButton from "@/components/FavoriteButton";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -22,6 +24,8 @@ const Products = () => {
   const [vehicleYear, setVehicleYear] = useState('');
   const [vehicleMake, setVehicleMake] = useState('');
   const [vehicleModel, setVehicleModel] = useState('');
+
+  const { addItem } = useCart();
 
   // Initialize from URL params
   useEffect(() => {
@@ -89,6 +93,25 @@ const Products = () => {
     } else {
       setSelectedBrand('');
     }
+  };
+
+  const handleAddToCart = (product: any) => {
+    if (!product.in_stock) {
+      toast.error("This item is currently out of stock");
+      return;
+    }
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      partNumber: product.part_number,
+      price: product.price,
+      image: product.image_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop',
+      inStock: product.in_stock
+    });
+
+    toast.success(`${product.name} added to cart!`);
   };
 
   return (
@@ -274,6 +297,11 @@ const Products = () => {
                           <div className="absolute top-2 right-2">
                             <FavoriteButton productId={product.id} />
                           </div>
+                          {!product.in_stock && (
+                            <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                              <span className="text-white font-semibold">Out of Stock</span>
+                            </div>
+                          )}
                         </div>
                       </Link>
                       
@@ -304,6 +332,11 @@ const Products = () => {
                         </div>
                         
                         <Button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                          }}
                           className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                           disabled={!product.in_stock}
                         >
