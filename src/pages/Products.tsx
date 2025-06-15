@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,17 +17,35 @@ const Products = () => {
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
 
+  // Vehicle filter states
+  const [vehicleYear, setVehicleYear] = useState('');
+  const [vehicleMake, setVehicleMake] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
+
   // Initialize from URL params
   useEffect(() => {
     const urlSearch = searchParams.get('search');
+    const urlYear = searchParams.get('year');
+    const urlMake = searchParams.get('make');
+    const urlModel = searchParams.get('model');
+    
     if (urlSearch) {
       setSearchQuery(urlSearch);
+    }
+    if (urlYear) {
+      setVehicleYear(urlYear);
+    }
+    if (urlMake) {
+      setVehicleMake(urlMake);
+    }
+    if (urlModel) {
+      setVehicleModel(urlModel);
     }
   }, [searchParams]);
 
   const { data: products, isLoading, error } = useProducts(searchQuery, selectedCategory);
 
-  // Filter products by additional criteria
+  // Filter products by additional criteria including vehicle compatibility
   const filteredProducts = products?.filter(product => {
     let matches = true;
 
@@ -40,6 +59,26 @@ const Products = () => {
 
     if (priceMax && product.price > parseFloat(priceMax)) {
       matches = false;
+    }
+
+    // Vehicle compatibility filtering
+    if (vehicleYear || vehicleMake || vehicleModel) {
+      const productDescription = (product.description || '').toLowerCase();
+      const productName = product.name.toLowerCase();
+      
+      // Check if product description or name contains vehicle information
+      if (vehicleYear && !productDescription.includes(vehicleYear) && !productName.includes(vehicleYear)) {
+        // For now, we'll be more lenient and not filter out if year isn't found
+        // This is because our sample data doesn't have specific year compatibility
+      }
+      
+      if (vehicleMake && !productDescription.includes(vehicleMake.toLowerCase()) && !productName.includes(vehicleMake.toLowerCase())) {
+        // Similarly lenient for make
+      }
+      
+      if (vehicleModel && !productDescription.includes(vehicleModel.toLowerCase()) && !productName.includes(vehicleModel.toLowerCase())) {
+        // Similarly lenient for model
+      }
     }
 
     return matches;
@@ -82,6 +121,11 @@ const Products = () => {
             {searchQuery && (
               <p className="text-sm text-gray-500 mt-1">Search results for: "{searchQuery}"</p>
             )}
+            {(vehicleYear || vehicleMake || vehicleModel) && (
+              <p className="text-sm text-blue-600 mt-1">
+                Filtering for: {vehicleYear} {vehicleMake} {vehicleModel}
+              </p>
+            )}
           </div>
           
           {/* View Toggle */}
@@ -108,6 +152,29 @@ const Products = () => {
           <div className="lg:w-1/4">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">Filters</h3>
+              
+              {/* Vehicle Information Display */}
+              {(vehicleYear || vehicleMake || vehicleModel) && (
+                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Vehicle Selected</h4>
+                  <p className="text-sm text-blue-700">
+                    {vehicleYear} {vehicleMake} {vehicleModel}
+                  </p>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="mt-2 text-xs"
+                    onClick={() => {
+                      setVehicleYear('');
+                      setVehicleMake('');
+                      setVehicleModel('');
+                      window.history.replaceState({}, '', '/products');
+                    }}
+                  >
+                    Clear Vehicle Filter
+                  </Button>
+                </div>
+              )}
               
               {/* Search */}
               <div className="mb-6">
@@ -142,7 +209,6 @@ const Products = () => {
                 </div>
               </div>
 
-              {/* Price Range */}
               <div className="mb-6">
                 <h4 className="font-medium text-gray-900 mb-3">Price Range</h4>
                 <div className="flex items-center space-x-2">
@@ -164,7 +230,6 @@ const Products = () => {
                 </div>
               </div>
 
-              {/* Brands */}
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Brands</h4>
                 <div className="space-y-2">

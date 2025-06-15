@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -63,8 +62,22 @@ const Hero = () => {
   };
 
   const handleFindParts = () => {
-    // Navigate to products page with vehicle filters
+    // Create a more specific search query based on vehicle selection
     const params = new URLSearchParams();
+    
+    // Build a search query that includes vehicle information
+    let searchTerms = [];
+    if (selectedYear) searchTerms.push(selectedYear);
+    if (selectedMake) searchTerms.push(selectedMake);
+    if (selectedModel) searchTerms.push(selectedModel);
+    
+    // If we have vehicle info, search for parts that match this vehicle
+    if (searchTerms.length > 0) {
+      const vehicleSearch = searchTerms.join(' ');
+      params.append('search', vehicleSearch);
+    }
+    
+    // Also add individual filters for more precise filtering
     if (selectedYear) params.append('year', selectedYear);
     if (selectedMake) params.append('make', selectedMake);
     if (selectedModel) params.append('model', selectedModel);
