@@ -112,15 +112,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const isInitialized = useRef(false);
+  const isLoading = useRef(false);
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
-  const isSyncingRef = useRef(false);
 
   // Load cart data when user changes or component mounts
   useEffect(() => {
     const loadCart = async () => {
       const currentUserId = user?.id || null;
       console.log('Loading cart for user:', currentUserId || 'anonymous');
+      
+      // Prevent multiple simultaneous loads
+      if (isLoading.current) {
+        console.log('Cart loading already in progress, skipping...');
+        return;
+      }
+
+      isLoading.current = true;
       
       try {
         if (user) {
@@ -139,14 +147,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             } catch (error) {
               console.error('Error parsing cart from localStorage:', error);
               localStorage.removeItem('cart');
+              dispatch({ type: 'LOAD_CART', payload: [] });
             }
+          } else {
+            dispatch({ type: 'LOAD_CART', payload: [] });
           }
         }
       } catch (error) {
         console.error('Error loading cart:', error);
+        dispatch({ type: 'LOAD_CART', payload: [] });
+      } finally {
+        isLoading.current = false;
+        isInitialized.current = true;
       }
-      
-      isInitialized.current = true;
     };
 
     const currentUserId = user?.id || null;
@@ -160,14 +173,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user?.id, loadCartFromDatabase]);
 
-  // Sync cart changes to database/localStorage
+  // Sync cart changes to database/localStorage (only for user actions, not initial loads)
   useEffect(() => {
-    if (!isInitialized.current || isSyncingRef.current) {
+    // Don't sync if we're not initialized, currently loading, or if this is the initial load
+    if (!isInitialized.current || isLoading.current) {
+      console.log('Skipping sync - not initialized or loading');
       return;
     }
 
     const syncCart = async () => {
-      isSyncingRef.current = true;
       console.log('Syncing cart changes:', state.items);
 
       try {
@@ -182,8 +196,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error('Error syncing cart:', error);
-      } finally {
-        isSyncingRef.current = false;
       }
     };
 
@@ -192,9 +204,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       clearTimeout(syncTimeoutRef.current);
     }
 
-    // For authenticated users, sync immediately but debounced
-    // For anonymous users, also debounce
-    syncTimeoutRef.current = setTimeout(syncCart, user ? 100 : 500);
+    // Debounce the sync to avoid too many database calls
+    syncTimeoutRef.current = setTimeout(syncCart, 500);
 
     return () => {
       if (syncTimeoutRef.current) {

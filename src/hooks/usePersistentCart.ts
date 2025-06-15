@@ -34,7 +34,7 @@ export const usePersistentCart = () => {
 
       console.log('Successfully cleared existing cart items');
 
-      // Then insert all current cart items
+      // Then insert all current cart items (only if there are items)
       if (items.length > 0) {
         const cartItemsToInsert = items.map(item => ({
           user_id: user.id,
@@ -65,7 +65,7 @@ export const usePersistentCart = () => {
         description: `Failed to sync cart: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
-      throw error; // Re-throw to allow caller to handle
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -105,24 +105,31 @@ export const usePersistentCart = () => {
 
       console.log('Raw cart data from database:', cartItems);
 
-      const formattedItems = cartItems?.map(item => {
-        const product = item.products as any;
-        if (!product) {
-          console.warn('Product not found for cart item:', item);
-          return null;
-        }
-        
-        return {
-          id: item.product_id,
-          name: product.name || '',
-          brand: product.brand || '',
-          partNumber: product.part_number || '',
-          price: product.price || 0,
-          quantity: item.quantity,
-          image: product.image_url || '/placeholder.svg',
-          inStock: product.in_stock ?? false
-        };
-      }).filter(item => item !== null) || [];
+      if (!cartItems || cartItems.length === 0) {
+        console.log('No cart items found in database');
+        return [];
+      }
+
+      const formattedItems = cartItems
+        .map(item => {
+          const product = item.products as any;
+          if (!product) {
+            console.warn('Product not found for cart item:', item);
+            return null;
+          }
+          
+          return {
+            id: item.product_id,
+            name: product.name || '',
+            brand: product.brand || '',
+            partNumber: product.part_number || '',
+            price: product.price || 0,
+            quantity: item.quantity,
+            image: product.image_url || '/placeholder.svg',
+            inStock: product.in_stock ?? false
+          };
+        })
+        .filter(item => item !== null) as CartItem[];
 
       console.log('Formatted cart items loaded from database:', formattedItems);
       return formattedItems;
