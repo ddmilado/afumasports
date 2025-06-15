@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
@@ -9,6 +9,58 @@ const Hero = () => {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedMake, setSelectedMake] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
+
+  // Generate years from 2010 to 2024
+  const years = Array.from({ length: 15 }, (_, i) => 2024 - i);
+
+  // Most popular car makes
+  const makes = [
+    "Toyota", "Honda", "Ford", "Chevrolet", "BMW", "Mercedes-Benz", 
+    "Audi", "Volkswagen", "Nissan", "Hyundai", "Kia", "Subaru", 
+    "Mazda", "Lexus", "Acura", "Infiniti", "Cadillac", "Lincoln", 
+    "Buick", "GMC", "Jeep", "Ram"
+  ];
+
+  // Model data based on make
+  const modelsByMake = {
+    "Toyota": ["Camry", "Corolla", "Prius", "RAV4", "Highlander", "Tacoma", "Tundra", "4Runner"],
+    "Honda": ["Civic", "Accord", "CR-V", "Pilot", "Fit", "HR-V", "Ridgeline", "Passport"],
+    "Ford": ["F-150", "Escape", "Explorer", "Focus", "Fusion", "Mustang", "Edge", "Expedition"],
+    "Chevrolet": ["Silverado", "Equinox", "Malibu", "Cruze", "Tahoe", "Suburban", "Camaro", "Traverse"],
+    "BMW": ["3 Series", "5 Series", "X3", "X5", "7 Series", "X1", "4 Series", "2 Series"],
+    "Mercedes-Benz": ["C-Class", "E-Class", "S-Class", "GLC", "GLE", "A-Class", "CLA", "GLA"],
+    "Audi": ["A4", "A6", "Q5", "Q7", "A3", "Q3", "A8", "TT"],
+    "Volkswagen": ["Jetta", "Passat", "Tiguan", "Atlas", "Golf", "Beetle", "Arteon", "ID.4"],
+    "Nissan": ["Altima", "Sentra", "Rogue", "Pathfinder", "Maxima", "Murano", "Frontier", "Titan"],
+    "Hyundai": ["Elantra", "Sonata", "Tucson", "Santa Fe", "Accent", "Palisade", "Kona", "Venue"],
+    "Kia": ["Forte", "Optima", "Sorento", "Sportage", "Soul", "Telluride", "Rio", "Stinger"],
+    "Subaru": ["Outback", "Forester", "Impreza", "Legacy", "Crosstrek", "Ascent", "WRX", "BRZ"],
+    "Mazda": ["Mazda3", "Mazda6", "CX-5", "CX-9", "CX-3", "CX-30", "MX-5 Miata", "CX-50"],
+    "Lexus": ["ES", "RX", "NX", "GX", "LX", "IS", "LS", "UX"],
+    "Acura": ["TLX", "MDX", "RDX", "ILX", "NSX", "TL", "TSX", "ZDX"],
+    "Infiniti": ["Q50", "QX60", "QX80", "Q60", "QX50", "Q70", "QX30", "M"],
+    "Cadillac": ["Escalade", "XT5", "ATS", "CTS", "SRX", "XTS", "CT6", "XT4"],
+    "Lincoln": ["Navigator", "MKZ", "MKX", "MKC", "Continental", "Aviator", "Corsair", "Nautilus"],
+    "Buick": ["Enclave", "Encore", "LaCrosse", "Regal", "Verano", "Envision", "Cascada", "Envista"],
+    "GMC": ["Sierra", "Acadia", "Terrain", "Yukon", "Canyon", "Savana", "Envoy", "Denali"],
+    "Jeep": ["Wrangler", "Grand Cherokee", "Cherokee", "Compass", "Renegade", "Gladiator", "Patriot", "Liberty"],
+    "Ram": ["1500", "2500", "3500", "ProMaster", "Dakota", "ProMaster City", "Chassis Cab", "C/V"]
+  };
+
+  // Reset model when make changes
+  useEffect(() => {
+    setSelectedModel("");
+  }, [selectedMake]);
+
+  // Reset model when year changes
+  useEffect(() => {
+    setSelectedModel("");
+  }, [selectedYear]);
+
+  const getAvailableModels = () => {
+    if (!selectedMake) return [];
+    return modelsByMake[selectedMake] || [];
+  };
 
   const handleFindParts = () => {
     // Navigate to products page with vehicle filters
@@ -60,11 +112,9 @@ const Hero = () => {
               onChange={(e) => setSelectedYear(e.target.value)}
             >
               <option value="">Select Year</option>
-              <option value="2024">2024</option>
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2021">2021</option>
-              <option value="2020">2020</option>
+              {years.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
             </select>
             <select 
               className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
@@ -72,23 +122,20 @@ const Hero = () => {
               onChange={(e) => setSelectedMake(e.target.value)}
             >
               <option value="">Select Make</option>
-              <option value="Toyota">Toyota</option>
-              <option value="Honda">Honda</option>
-              <option value="Ford">Ford</option>
-              <option value="Chevrolet">Chevrolet</option>
-              <option value="BMW">BMW</option>
+              {makes.map(make => (
+                <option key={make} value={make}>{make}</option>
+              ))}
             </select>
             <select 
               className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
+              disabled={!selectedMake}
             >
               <option value="">Select Model</option>
-              <option value="Camry">Camry</option>
-              <option value="Civic">Civic</option>
-              <option value="F-150">F-150</option>
-              <option value="Silverado">Silverado</option>
-              <option value="3 Series">3 Series</option>
+              {getAvailableModels().map(model => (
+                <option key={model} value={model}>{model}</option>
+              ))}
             </select>
             <Button 
               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
