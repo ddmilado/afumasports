@@ -2,7 +2,6 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePersistentCart } from '@/hooks/usePersistentCart';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export interface CartItem {
   id: string;
