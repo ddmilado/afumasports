@@ -1,14 +1,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getYearOptions, getMakeOptions, getModelOptions } from "@/utils/vehicleData";
 
 const Hero = () => {
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedMake, setSelectedMake] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+
+  const yearOptions = getYearOptions();
+  const makeOptions = getMakeOptions();
+
+  // Update available models when make changes
+  useEffect(() => {
+    if (selectedMake) {
+      const models = getModelOptions(selectedMake);
+      setAvailableModels(models);
+      setSelectedModel(""); // Reset model selection when make changes
+    } else {
+      setAvailableModels([]);
+      setSelectedModel("");
+    }
+  }, [selectedMake]);
 
   const handleFindParts = () => {
     // Navigate to products page with vehicle filters
@@ -60,11 +77,9 @@ const Hero = () => {
               onChange={(e) => setSelectedYear(e.target.value)}
             >
               <option value="">Select Year</option>
-              <option value="2024">2024</option>
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2021">2021</option>
-              <option value="2020">2020</option>
+              {yearOptions.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
             </select>
             <select 
               className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
@@ -72,23 +87,20 @@ const Hero = () => {
               onChange={(e) => setSelectedMake(e.target.value)}
             >
               <option value="">Select Make</option>
-              <option value="Toyota">Toyota</option>
-              <option value="Honda">Honda</option>
-              <option value="Ford">Ford</option>
-              <option value="Chevrolet">Chevrolet</option>
-              <option value="BMW">BMW</option>
+              {makeOptions.map(make => (
+                <option key={make} value={make}>{make}</option>
+              ))}
             </select>
             <select 
               className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
+              disabled={!selectedMake}
             >
               <option value="">Select Model</option>
-              <option value="Camry">Camry</option>
-              <option value="Civic">Civic</option>
-              <option value="F-150">F-150</option>
-              <option value="Silverado">Silverado</option>
-              <option value="3 Series">3 Series</option>
+              {availableModels.map(model => (
+                <option key={model} value={model}>{model}</option>
+              ))}
             </select>
             <Button 
               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
