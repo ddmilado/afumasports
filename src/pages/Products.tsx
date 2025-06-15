@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
+import FavoriteButton from "@/components/FavoriteButton";
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -263,12 +264,15 @@ const Products = () => {
                   {filteredProducts.map((product) => (
                     <div key={product.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
                       <Link to={`/product/${product.id}`}>
-                        <div className="aspect-square overflow-hidden">
+                        <div className="aspect-square overflow-hidden relative">
                           <img
                             src={product.image_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop'}
                             alt={product.name}
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                           />
+                          <div className="absolute top-2 right-2">
+                            <FavoriteButton productId={product.id} />
+                          </div>
                         </div>
                       </Link>
                       

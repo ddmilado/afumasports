@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw } from "lucide-react";
+import { ShoppingCart, Share2, Truck, Shield, RotateCcw } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FavoriteButton from "@/components/FavoriteButton";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -172,9 +173,7 @@ const ProductDetail = () => {
                 Add to Cart
               </Button>
               
-              <Button variant="outline" size="icon">
-                <Heart className="w-5 h-5" />
-              </Button>
+              <FavoriteButton productId={product.id} size="default" variant="outline" />
               
               <Button variant="outline" size="icon">
                 <Share2 className="w-5 h-5" />
