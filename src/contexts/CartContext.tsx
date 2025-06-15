@@ -111,72 +111,90 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     itemCount: 0,
   });
 
-  // Track if we've already loaded the cart for this user
-  const loadedUserRef = useRef<string | null>(null);
+  // Track initialization and sync state
+  const isInitialized = useRef(false);
+  const lastSyncedItems = useRef<string>('');
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Load cart from database when user logs in - only once per user change
+  // Load cart data on mount and when user changes
   useEffect(() => {
     let isMounted = true;
     
-    const loadUserCart = async () => {
-      // Only load if user changed or first time loading
-      if (user && user.id !== loadedUserRef.current) {
-        console.log('Loading cart from database for user:', user.id);
-        loadedUserRef.current = user.id;
-        
-        try {
+    const loadCart = async () => {
+      console.log('Loading cart for user:', user?.id || 'anonymous');
+      
+      try {
+        if (user) {
+          // Load from database for authenticated users
           const cartItems = await loadCartFromDatabase();
           if (isMounted) {
             dispatch({ type: 'LOAD_CART', payload: cartItems });
+            console.log('Loaded cart from database:', cartItems);
           }
-        } catch (error) {
-          console.error('Error loading cart:', error);
-        }
-      } else if (!user) {
-        // If user logs out, load from localStorage and reset loaded user
-        loadedUserRef.current = null;
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart && isMounted) {
-          try {
-            const cartItems = JSON.parse(savedCart);
-            dispatch({ type: 'LOAD_CART', payload: cartItems });
-          } catch (error) {
-            console.error('Error loading cart from localStorage:', error);
+        } else {
+          // Load from localStorage for anonymous users
+          const savedCart = localStorage.getItem('cart');
+          if (savedCart && isMounted) {
+            try {
+              const cartItems = JSON.parse(savedCart);
+              dispatch({ type: 'LOAD_CART', payload: cartItems });
+              console.log('Loaded cart from localStorage:', cartItems);
+            } catch (error) {
+              console.error('Error parsing cart from localStorage:', error);
+              localStorage.removeItem('cart');
+            }
           }
         }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      } finally {
+        isInitialized.current = true;
       }
     };
 
-    loadUserCart();
+    // Only load if not already initialized or user changed
+    if (!isInitialized.current) {
+      loadCart();
+    }
     
     return () => {
       isMounted = false;
     };
   }, [user?.id, loadCartFromDatabase]);
 
-  // Sync cart to database or localStorage whenever it changes - with debouncing
+  // Sync cart changes to database/localStorage with debouncing
   useEffect(() => {
+    // Don't sync if not initialized yet
+    if (!isInitialized.current) {
+      return;
+    }
+
+    // Check if items actually changed
+    const currentItemsString = JSON.stringify(state.items);
+    if (currentItemsString === lastSyncedItems.current) {
+      return;
+    }
+
     // Clear any existing timeout
     if (syncTimeoutRef.current) {
       clearTimeout(syncTimeoutRef.current);
     }
 
-    // Don't sync if this is the initial load (empty cart)
-    if (state.items.length === 0 && loadedUserRef.current === null) {
-      return;
-    }
+    // Debounce the sync operation
+    syncTimeoutRef.current = setTimeout(async () => {
+      console.log('Syncing cart changes:', state.items);
+      lastSyncedItems.current = currentItemsString;
 
-    syncTimeoutRef.current = setTimeout(() => {
-      if (user) {
-        console.log('Syncing cart to database:', state.items);
-        syncCartToDatabase(state.items).catch(error => {
-          console.error('Error syncing cart to database:', error);
-        });
-      } else {
-        localStorage.setItem('cart', JSON.stringify(state.items));
+      try {
+        if (user) {
+          await syncCartToDatabase(state.items);
+        } else {
+          localStorage.setItem('cart', JSON.stringify(state.items));
+        }
+      } catch (error) {
+        console.error('Error syncing cart:', error);
       }
-    }, 500); // Debounce for 500ms
+    }, 500);
 
     return () => {
       if (syncTimeoutRef.current) {
@@ -206,14 +224,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: 'CLEAR_CART_AFTER_CHECKOUT' });
     
     // Clear from database/localStorage as well
-    if (user) {
-      try {
+    try {
+      if (user) {
         await clearCartFromDatabase();
-      } catch (error) {
-        console.error('Error clearing cart from database:', error);
+      } else {
+        localStorage.removeItem('cart');
       }
-    } else {
-      localStorage.removeItem('cart');
+    } catch (error) {
+      console.error('Error clearing cart from storage:', error);
     }
   }, [user, clearCartFromDatabase]);
 
