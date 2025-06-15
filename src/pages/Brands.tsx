@@ -59,7 +59,7 @@ const Brands = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pt-32">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Shop by Brand</h1>
           <p className="text-xl text-gray-600">
@@ -82,7 +82,7 @@ const Brands = () => {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-slate-500 transition-colors">
                   {brand.name}
                 </h3>
                 <p className="text-gray-600 mb-4">{brand.description}</p>
@@ -90,7 +90,7 @@ const Brands = () => {
                   <span className="text-sm text-gray-500">
                     {brand.productCount.toLocaleString()} products
                   </span>
-                  <span className="text-orange-500 font-medium group-hover:underline">
+                  <span className="text-slate-500 font-medium group-hover:underline">
                     View Products →
                   </span>
                 </div>

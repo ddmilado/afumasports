@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -53,7 +54,7 @@ const Hero = () => {
 
   // Reset model when year changes
   useEffect(() => {
-    setSelectedModel("");
+    setSelectedYear("");
   }, [selectedYear]);
 
   const getAvailableModels = () => {
@@ -107,7 +108,7 @@ const Hero = () => {
       
       <div className="relative container mx-auto px-4 pt-44 pb-20 text-center">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Find the <span className="text-orange-500">Perfect Parts</span><br />
+          Find the <span className="text-blue-600">Perfect Parts</span><br />
           for Your Vehicle
         </h1>
         <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
@@ -120,7 +121,7 @@ const Hero = () => {
           <h3 className="text-lg font-semibold mb-4">Find Parts for Your Vehicle</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
             >
@@ -130,7 +131,7 @@ const Hero = () => {
               ))}
             </select>
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
               value={selectedMake}
               onChange={(e) => setSelectedMake(e.target.value)}
             >
@@ -140,7 +141,7 @@ const Hero = () => {
               ))}
             </select>
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-orange-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
               disabled={!selectedMake}
@@ -151,7 +152,7 @@ const Hero = () => {
               ))}
             </select>
             <Button 
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
+              className="bg-slate-500 hover:bg-slate-600 text-white font-semibold py-3"
               onClick={handleFindParts}
             >
               <Search className="w-4 h-4 mr-2" />
@@ -163,7 +164,7 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3"
+            className="bg-slate-500 hover:bg-slate-600 text-white font-semibold px-8 py-3"
             onClick={handleShopNow}
           >
             Shop Now
