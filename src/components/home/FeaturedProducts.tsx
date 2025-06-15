@@ -5,6 +5,7 @@ import { useFeaturedProducts } from "@/hooks/useProducts";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const FeaturedProducts = () => {
   const { data: products, isLoading, error } = useFeaturedProducts();
@@ -33,9 +34,10 @@ const FeaturedProducts = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Featured Products
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Loading products...
-            </p>
+            <div className="flex items-center justify-center space-x-2">
+              <LoadingSpinner size="lg" />
+              <p className="text-lg text-gray-600">Loading products...</p>
+            </div>
           </div>
         </div>
       </section>

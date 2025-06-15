@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
@@ -13,6 +14,21 @@ const Cart = () => {
   const shipping = subtotal > 150 ? 0 : 15.99;
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
+
+  if (cartState.isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <div className="flex items-center justify-center space-x-2">
+            <LoadingSpinner size="lg" />
+            <span className="text-lg text-gray-600">Loading your cart...</span>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (cartState.items.length === 0) {
     return (

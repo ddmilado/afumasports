@@ -1,6 +1,8 @@
+
 import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePersistentCart } from '@/hooks/usePersistentCart';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export interface CartItem {
   id: string;
@@ -17,6 +19,7 @@ interface CartState {
   items: CartItem[];
   total: number;
   itemCount: number;
+  isLoading: boolean;
 }
 
 type CartAction =
@@ -25,10 +28,14 @@ type CartAction =
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'CLEAR_CART_AFTER_CHECKOUT' }
-  | { type: 'LOAD_CART'; payload: CartItem[] };
+  | { type: 'LOAD_CART'; payload: CartItem[] }
+  | { type: 'SET_LOADING'; payload: boolean };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+      
     case 'ADD_ITEM': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
       
@@ -66,7 +73,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     
     case 'CLEAR_CART':
     case 'CLEAR_CART_AFTER_CHECKOUT':
-      return { items: [], total: 0, itemCount: 0 };
+      return { ...state, items: [], total: 0, itemCount: 0 };
     
     case 'LOAD_CART':
       return calculateCartTotals({ ...state, items: action.payload });
@@ -103,11 +110,12 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const { syncCartToDatabase, loadCartFromDatabase, clearCartFromDatabase } = usePersistentCart();
+  const { syncCartToDatabase, loadCartFromDatabase, clearCartFromDatabase, isLoading: persistentLoading } = usePersistentCart();
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     total: 0,
     itemCount: 0,
+    isLoading: false,
   });
 
   const isInitialized = useRef(false);
@@ -115,6 +123,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
   const isSyncing = useRef(false);
+
+  // Update loading state when persistent loading changes
+  useEffect(() => {
+    dispatch({ type: 'SET_LOADING', payload: persistentLoading });
+  }, [persistentLoading]);
 
   // Load cart data when user changes or component mounts
   useEffect(() => {
@@ -129,6 +142,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
 
       isLoading.current = true;
+      dispatch({ type: 'SET_LOADING', payload: true });
       
       try {
         if (user) {
@@ -158,6 +172,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: 'LOAD_CART', payload: [] });
       } finally {
         isLoading.current = false;
+        dispatch({ type: 'SET_LOADING', payload: false });
         isInitialized.current = true;
       }
     };
