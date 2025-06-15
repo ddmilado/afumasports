@@ -6,15 +6,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const { items } = useCart();
+  const { user } = useAuth();
+  const { cartItems } = useCart();
 
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ const Header = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    await supabase.auth.signOut();
     navigate('/');
   };
 
