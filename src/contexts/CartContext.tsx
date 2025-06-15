@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePersistentCart } from '@/hooks/usePersistentCart';
 
@@ -108,19 +108,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     itemCount: 0,
   });
 
+  // Track if we've already loaded the cart for this user
+  const loadedUserRef = useRef<string | null>(null);
+  const syncTimeoutRef = useRef<NodeJS.Timeout>();
+
   // Load cart from database when user logs in - only once per user change
   useEffect(() => {
     let isMounted = true;
     
     const loadUserCart = async () => {
-      if (user) {
+      // Only load if user changed or first time loading
+      if (user && user.id !== loadedUserRef.current) {
         console.log('Loading cart from database for user:', user.id);
-        const cartItems = await loadCartFromDatabase();
-        if (isMounted) {
-          dispatch({ type: 'LOAD_CART', payload: cartItems });
+        loadedUserRef.current = user.id;
+        
+        try {
+          const cartItems = await loadCartFromDatabase();
+          if (isMounted) {
+            dispatch({ type: 'LOAD_CART', payload: cartItems });
+          }
+        } catch (error) {
+          console.error('Error loading cart:', error);
         }
-      } else {
-        // If user logs out, load from localStorage
+      } else if (!user) {
+        // If user logs out, load from localStorage and reset loaded user
+        loadedUserRef.current = null;
         const savedCart = localStorage.getItem('cart');
         if (savedCart && isMounted) {
           try {
@@ -138,21 +150,37 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       isMounted = false;
     };
-  }, [user?.id, loadCartFromDatabase]); // Only depend on user.id, not the entire user object
+  }, [user?.id, loadCartFromDatabase]);
 
   // Sync cart to database or localStorage whenever it changes - with debouncing
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    // Clear any existing timeout
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+
+    // Don't sync if this is the initial load (empty cart)
+    if (state.items.length === 0 && loadedUserRef.current === null) {
+      return;
+    }
+
+    syncTimeoutRef.current = setTimeout(() => {
       if (user) {
         console.log('Syncing cart to database:', state.items);
-        syncCartToDatabase(state.items);
+        syncCartToDatabase(state.items).catch(error => {
+          console.error('Error syncing cart to database:', error);
+        });
       } else {
         localStorage.setItem('cart', JSON.stringify(state.items));
       }
     }, 500); // Debounce for 500ms
 
-    return () => clearTimeout(timeoutId);
-  }, [state.items, user?.id, syncCartToDatabase]); // Only depend on user.id
+    return () => {
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+  }, [state.items, user?.id, syncCartToDatabase]);
 
   const addItem = useCallback((item: Omit<CartItem, 'quantity'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });
