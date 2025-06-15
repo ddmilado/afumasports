@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,11 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import HCaptcha from '@hcaptcha/react-hcaptcha';
+import { emailSchema, passwordSchema, sanitizeInput, createRateLimiter } from "@/utils/validation";
+import { useAuditLog } from "@/hooks/useAuditLog";
+
+// Create rate limiter for auth attempts (5 attempts per 15 minutes)
+const authRateLimiter = createRateLimiter(5, 15 * 60 * 1000);
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -16,6 +20,7 @@ const Auth = () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { logAuthAction } = useAuditLog();
   const captcha = useRef<HCaptcha>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,13 +28,44 @@ const Auth = () => {
     setIsSubmitting(true);
     
     const formData = new FormData(e.target as HTMLFormElement);
-    const email = formData.get('email') as string;
+    const email = sanitizeInput(formData.get('email') as string);
     const password = formData.get('password') as string;
-    const firstName = formData.get('firstName') as string;
-    const lastName = formData.get('lastName') as string;
+    const firstName = sanitizeInput(formData.get('firstName') as string);
+    const lastName = sanitizeInput(formData.get('lastName') as string);
     const confirmPassword = formData.get('confirmPassword') as string;
 
     try {
+      // Rate limiting check
+      if (!authRateLimiter(email)) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: "Too many login attempts. Please try again later.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Input validation
+      const emailValidation = emailSchema.safeParse(email);
+      if (!emailValidation.success) {
+        toast({
+          title: "Invalid Email",
+          description: emailValidation.error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const passwordValidation = passwordSchema.safeParse(password);
+      if (!passwordValidation.success) {
+        toast({
+          title: "Invalid Password",
+          description: passwordValidation.error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (isSignUp) {
         // Validate password confirmation
         if (password !== confirmPassword) {
@@ -59,7 +95,8 @@ const Auth = () => {
             data: {
               first_name: firstName,
               last_name: lastName
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/`
           },
         });
 
@@ -74,6 +111,7 @@ const Auth = () => {
             title: "Success!",
             description: "Please check your email to confirm your account.",
           });
+          logAuthAction('signup');
         }
 
         // Reset captcha after sign up attempt
@@ -98,6 +136,7 @@ const Auth = () => {
             title: "Welcome back!",
             description: "You have been signed in successfully.",
           });
+          logAuthAction('login');
         }
       }
     } catch (error) {

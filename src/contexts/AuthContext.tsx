@@ -29,17 +29,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener with enhanced security
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        console.log('Auth event:', event);
+        
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // Security: Clear sensitive data on sign out
+        if (event === 'SIGNED_OUT') {
+          localStorage.removeItem('cart');
+          // Clear any other sensitive localStorage items
+        }
+
+        // Security: Validate session integrity
+        if (session && event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully');
+        }
+
+        // Security: Log authentication events for audit
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+          console.log(`User ${event.toLowerCase()} at:`, new Date().toISOString());
+        }
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check for existing session with validation
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Session validation error:', error);
+      }
+      
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

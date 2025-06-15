@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { useFeaturedProducts } from "@/hooks/useProducts";
@@ -6,24 +5,50 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { productValidationSchema, sanitizeInput } from "@/utils/validation";
+import { useAuditLog } from "@/hooks/useAuditLog";
 
 const FeaturedProducts = () => {
   const { data: products, isLoading, error } = useFeaturedProducts();
   const { addItem } = useCart();
+  const { logCartAction } = useAuditLog();
   const navigate = useNavigate();
 
   const handleAddToCart = (product: any) => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      brand: product.brand,
-      partNumber: product.part_number,
-      price: product.price,
-      image: product.image_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop',
-      inStock: product.in_stock
-    });
-    
-    toast.success(`${product.name} added to cart!`);
+    try {
+      // Validate product data before adding to cart
+      const validationResult = productValidationSchema.safeParse({
+        name: product.name,
+        brand: product.brand,
+        partNumber: product.part_number,
+        price: product.price,
+        quantity: 1
+      });
+
+      if (!validationResult.success) {
+        toast.error("Invalid product data");
+        return;
+      }
+
+      // Sanitize product data
+      const sanitizedProduct = {
+        id: product.id,
+        name: sanitizeInput(product.name),
+        brand: sanitizeInput(product.brand),
+        partNumber: sanitizeInput(product.part_number),
+        price: product.price,
+        image: product.image_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop',
+        inStock: product.in_stock
+      };
+
+      addItem(sanitizedProduct);
+      logCartAction('add', product.id, 1);
+      
+      toast.success(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      toast.error("Failed to add product to cart");
+    }
   };
 
   if (isLoading) {
