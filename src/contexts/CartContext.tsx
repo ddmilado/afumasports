@@ -1,5 +1,7 @@
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePersistentCart } from '@/hooks/usePersistentCart';
 
 export interface CartItem {
   id: string;
@@ -98,29 +100,45 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
+  const { syncCartToDatabase, loadCartFromDatabase } = usePersistentCart();
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     total: 0,
     itemCount: 0,
   });
 
-  // Load cart from localStorage on mount
+  // Load cart from database when user logs in
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        const cartItems = JSON.parse(savedCart);
+    const loadUserCart = async () => {
+      if (user) {
+        const cartItems = await loadCartFromDatabase();
         dispatch({ type: 'LOAD_CART', payload: cartItems });
-      } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
+      } else {
+        // If user logs out, load from localStorage
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+          try {
+            const cartItems = JSON.parse(savedCart);
+            dispatch({ type: 'LOAD_CART', payload: cartItems });
+          } catch (error) {
+            console.error('Error loading cart from localStorage:', error);
+          }
+        }
       }
-    }
-  }, []);
+    };
 
-  // Save cart to localStorage whenever it changes
+    loadUserCart();
+  }, [user, loadCartFromDatabase]);
+
+  // Sync cart to database or localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state.items));
-  }, [state.items]);
+    if (user) {
+      syncCartToDatabase(state.items);
+    } else {
+      localStorage.setItem('cart', JSON.stringify(state.items));
+    }
+  }, [state.items, user, syncCartToDatabase]);
 
   const addItem = (item: Omit<CartItem, 'quantity'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });

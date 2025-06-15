@@ -85,11 +85,21 @@ const Checkout = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" type="text" required />
+                        <Input 
+                          id="firstName" 
+                          type="text" 
+                          required 
+                          defaultValue={user?.user_metadata?.first_name || ''}
+                        />
                       </div>
                       <div>
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" type="text" required />
+                        <Input 
+                          id="lastName" 
+                          type="text" 
+                          required 
+                          defaultValue={user?.user_metadata?.last_name || ''}
+                        />
                       </div>
                     </div>
                     
@@ -108,23 +118,37 @@ const Checkout = () => {
                       <Input id="address" type="text" required />
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
                         <Label htmlFor="city">City</Label>
                         <Input id="city" type="text" required />
                       </div>
                       <div>
-                        <Label htmlFor="state">State</Label>
-                        <select id="state" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
-                          <option>Select State</option>
-                          <option>California</option>
-                          <option>Texas</option>
-                          <option>Florida</option>
-                        </select>
+                        <Label htmlFor="state">State/Province</Label>
+                        <Input id="state" type="text" required placeholder="e.g., CA, NY, ON" />
                       </div>
                       <div>
-                        <Label htmlFor="zip">ZIP Code</Label>
+                        <Label htmlFor="zip">ZIP/Postal Code</Label>
                         <Input id="zip" type="text" required />
+                      </div>
+                      <div>
+                        <Label htmlFor="country">Country</Label>
+                        <select id="country" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" required>
+                          <option value="">Select Country</option>
+                          <option value="US">United States</option>
+                          <option value="CA">Canada</option>
+                          <option value="MX">Mexico</option>
+                          <option value="GB">United Kingdom</option>
+                          <option value="AU">Australia</option>
+                          <option value="DE">Germany</option>
+                          <option value="FR">France</option>
+                          <option value="IT">Italy</option>
+                          <option value="ES">Spain</option>
+                          <option value="JP">Japan</option>
+                          <option value="BR">Brazil</option>
+                          <option value="IN">India</option>
+                          <option value="ZA">South Africa</option>
+                        </select>
                       </div>
                     </div>
                   </form>
@@ -193,7 +217,11 @@ const Checkout = () => {
                     
                     <div>
                       <Label htmlFor="cardName">Name on Card</Label>
-                      <Input id="cardName" type="text" />
+                      <Input 
+                        id="cardName" 
+                        type="text" 
+                        defaultValue={`${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim()}
+                      />
                     </div>
                     
                     <div className="flex items-center">
