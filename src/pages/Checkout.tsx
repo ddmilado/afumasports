@@ -11,6 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import PaymentMethods from "@/components/PaymentMethods";
 
 const Checkout = () => {
   const { user, loading } = useAuth();
@@ -20,6 +21,7 @@ const Checkout = () => {
 
   // Form states
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [shippingAddress, setShippingAddress] = useState<any>(null);
 
   const allowedCountries = [
     { code: 'AE', name: 'UAE' },
@@ -65,6 +67,28 @@ const Checkout = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
+  const handleShippingSubmit = () => {
+    // Collect shipping address data
+    const formData = new FormData(document.querySelector('form') as HTMLFormElement);
+    const address = {
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      address: formData.get('address'),
+      city: formData.get('city'),
+      state: formData.get('state'),
+      zip: formData.get('zip'),
+      country: selectedCountry
+    };
+    setShippingAddress(address);
+    setStep(2);
+  };
+
+  const handlePaymentSuccess = (orderId: string) => {
+    navigate(`/payment-success?order_id=${orderId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -102,6 +126,7 @@ const Checkout = () => {
                         <Label htmlFor="firstName">First Name</Label>
                         <Input 
                           id="firstName" 
+                          name="firstName"
                           type="text" 
                           required 
                           defaultValue={user?.user_metadata?.first_name || ''}
@@ -111,6 +136,7 @@ const Checkout = () => {
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input 
                           id="lastName" 
+                          name="lastName"
                           type="text" 
                           required 
                           defaultValue={user?.user_metadata?.last_name || ''}
@@ -120,31 +146,31 @@ const Checkout = () => {
                     
                     <div>
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" required value={user.email || ''} readOnly className="bg-gray-50" />
+                      <Input id="email" name="email" type="email" required value={user.email || ''} readOnly className="bg-gray-50" />
                     </div>
                     
                     <div>
                       <Label htmlFor="phone">Phone Number</Label>
-                      <Input id="phone" type="tel" required />
+                      <Input id="phone" name="phone" type="tel" required />
                     </div>
                     
                     <div>
                       <Label htmlFor="address">Street Address</Label>
-                      <Input id="address" type="text" required />
+                      <Input id="address" name="address" type="text" required />
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
                         <Label htmlFor="city">City</Label>
-                        <Input id="city" type="text" required />
+                        <Input id="city" name="city" type="text" required />
                       </div>
                       <div>
                         <Label htmlFor="state">State/Province</Label>
-                        <Input id="state" type="text" required placeholder="e.g., Lagos, Dubai, Accra" />
+                        <Input id="state" name="state" type="text" required placeholder="e.g., Lagos, Dubai, Accra" />
                       </div>
                       <div>
                         <Label htmlFor="zip">ZIP/Postal Code</Label>
-                        <Input id="zip" type="text" required />
+                        <Input id="zip" name="zip" type="text" required />
                       </div>
                       <div>
                         <Label htmlFor="country">Country</Label>
@@ -204,95 +230,11 @@ const Checkout = () => {
               )}
 
               {step === 3 && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-6">Payment Information</h2>
-                  <form className="space-y-4">
-                    <div>
-                      <Label htmlFor="cardNumber">Card Number</Label>
-                      <div className="relative">
-                        <Input id="cardNumber" type="text" placeholder="1234 5678 9012 3456" />
-                        <CreditCard className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="expiry">Expiry Date</Label>
-                        <Input id="expiry" type="text" placeholder="MM/YY" />
-                      </div>
-                      <div>
-                        <Label htmlFor="cvv">CVV</Label>
-                        <Input id="cvv" type="text" placeholder="123" />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="cardName">Name on Card</Label>
-                      <Input 
-                        id="cardName" 
-                        type="text" 
-                        defaultValue={`${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim()}
-                      />
-                    </div>
-                    
-                    <div className="flex items-center">
-                      <input type="checkbox" id="billing" className="mr-2" />
-                      <Label htmlFor="billing" className="text-sm">
-                        Billing address is the same as shipping address
-                      </Label>
-                    </div>
-
-                    {/* Billing Address (only show if checkbox is unchecked) */}
-                    <div id="billingAddress" className="space-y-4 pt-4 border-t hidden">
-                      <h3 className="text-lg font-medium">Billing Address</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="billingFirstName">First Name</Label>
-                          <Input id="billingFirstName" type="text" />
-                        </div>
-                        <div>
-                          <Label htmlFor="billingLastName">Last Name</Label>
-                          <Input id="billingLastName" type="text" />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="billingAddress">Street Address</Label>
-                        <Input id="billingAddress" type="text" />
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                          <Label htmlFor="billingCity">City</Label>
-                          <Input id="billingCity" type="text" />
-                        </div>
-                        <div>
-                          <Label htmlFor="billingState">State/Province</Label>
-                          <Input id="billingState" type="text" placeholder="e.g., Lagos, Dubai, Accra" />
-                        </div>
-                        <div>
-                          <Label htmlFor="billingZip">ZIP/Postal Code</Label>
-                          <Input id="billingZip" type="text" />
-                        </div>
-                        <div>
-                          <Label htmlFor="billingCountry">Country</Label>
-                          <Select defaultValue={selectedCountry}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {allowedCountries.map((country) => (
-                                <SelectItem key={country.code} value={country.code}>
-                                  {country.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
+                <PaymentMethods 
+                  selectedCountry={selectedCountry}
+                  shippingAddress={shippingAddress}
+                  onPaymentSuccess={handlePaymentSuccess}
+                />
               )}
 
               <div className="flex justify-between mt-8">
@@ -302,17 +244,22 @@ const Checkout = () => {
                   </Button>
                 )}
                 
-                {step < 3 ? (
+                {step === 1 && (
                   <Button 
                     className="bg-orange-500 hover:bg-orange-600 ml-auto"
-                    onClick={() => setStep(step + 1)}
+                    onClick={handleShippingSubmit}
+                    disabled={!selectedCountry}
                   >
                     Continue
                   </Button>
-                ) : (
-                  <Button className="bg-orange-500 hover:bg-orange-600 ml-auto">
-                    <Lock className="w-4 h-4 mr-2" />
-                    Place Order
+                )}
+
+                {step === 2 && (
+                  <Button 
+                    className="bg-orange-500 hover:bg-orange-600 ml-auto"
+                    onClick={() => setStep(3)}
+                  >
+                    Continue to Payment
                   </Button>
                 )}
               </div>
