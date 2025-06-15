@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePersistentCart } from '@/hooks/usePersistentCart';
 
@@ -108,16 +108,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     itemCount: 0,
   });
 
-  // Load cart from database when user logs in
+  // Load cart from database when user logs in - only once per user change
   useEffect(() => {
+    let isMounted = true;
+    
     const loadUserCart = async () => {
       if (user) {
+        console.log('Loading cart from database for user:', user.id);
         const cartItems = await loadCartFromDatabase();
-        dispatch({ type: 'LOAD_CART', payload: cartItems });
+        if (isMounted) {
+          dispatch({ type: 'LOAD_CART', payload: cartItems });
+        }
       } else {
         // If user logs out, load from localStorage
         const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
+        if (savedCart && isMounted) {
           try {
             const cartItems = JSON.parse(savedCart);
             dispatch({ type: 'LOAD_CART', payload: cartItems });
@@ -129,32 +134,41 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     loadUserCart();
-  }, [user, loadCartFromDatabase]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id, loadCartFromDatabase]); // Only depend on user.id, not the entire user object
 
-  // Sync cart to database or localStorage whenever it changes
+  // Sync cart to database or localStorage whenever it changes - with debouncing
   useEffect(() => {
-    if (user) {
-      syncCartToDatabase(state.items);
-    } else {
-      localStorage.setItem('cart', JSON.stringify(state.items));
-    }
-  }, [state.items, user, syncCartToDatabase]);
+    const timeoutId = setTimeout(() => {
+      if (user) {
+        console.log('Syncing cart to database:', state.items);
+        syncCartToDatabase(state.items);
+      } else {
+        localStorage.setItem('cart', JSON.stringify(state.items));
+      }
+    }, 500); // Debounce for 500ms
 
-  const addItem = (item: Omit<CartItem, 'quantity'>) => {
+    return () => clearTimeout(timeoutId);
+  }, [state.items, user?.id, syncCartToDatabase]); // Only depend on user.id
+
+  const addItem = useCallback((item: Omit<CartItem, 'quantity'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });
-  };
+  }, []);
 
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     dispatch({ type: 'REMOVE_ITEM', payload: id });
-  };
+  }, []);
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = useCallback((id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' });
-  };
+  }, []);
 
   return (
     <CartContext.Provider value={{ state, addItem, removeItem, updateQuantity, clearCart }}>

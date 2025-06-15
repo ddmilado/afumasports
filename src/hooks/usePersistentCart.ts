@@ -15,28 +15,41 @@ export const usePersistentCart = () => {
 
     try {
       setIsLoading(true);
+      console.log('Syncing cart items to database:', items);
       
       // First, get current cart items from database
-      const { data: currentItems } = await supabase
+      const { data: currentItems, error: fetchError } = await supabase
         .from('cart_items')
         .select('*')
         .eq('user_id', user.id);
+
+      if (fetchError) {
+        console.error('Error fetching current cart items:', fetchError);
+        throw fetchError;
+      }
 
       // Delete items that are no longer in local cart
       const localProductIds = items.map(item => item.id);
       const itemsToDelete = currentItems?.filter(item => !localProductIds.includes(item.product_id)) || [];
       
       if (itemsToDelete.length > 0) {
-        await supabase
+        console.log('Deleting items:', itemsToDelete);
+        const { error: deleteError } = await supabase
           .from('cart_items')
           .delete()
           .in('product_id', itemsToDelete.map(item => item.product_id))
           .eq('user_id', user.id);
+          
+        if (deleteError) {
+          console.error('Error deleting cart items:', deleteError);
+          throw deleteError;
+        }
       }
 
       // Upsert current cart items
       for (const item of items) {
-        await supabase
+        console.log('Upserting item:', item);
+        const { error: upsertError } = await supabase
           .from('cart_items')
           .upsert({
             user_id: user.id,
@@ -45,7 +58,14 @@ export const usePersistentCart = () => {
           }, {
             onConflict: 'user_id,product_id'
           });
+          
+        if (upsertError) {
+          console.error('Error upserting cart item:', upsertError);
+          throw upsertError;
+        }
       }
+      
+      console.log('Cart sync completed successfully');
     } catch (error) {
       console.error('Error syncing cart to database:', error);
       toast({
@@ -63,6 +83,7 @@ export const usePersistentCart = () => {
 
     try {
       setIsLoading(true);
+      console.log('Loading cart from database for user:', user.id);
       
       const { data: cartItems, error } = await supabase
         .from('cart_items')
@@ -81,7 +102,12 @@ export const usePersistentCart = () => {
         `)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading cart from database:', error);
+        throw error;
+      }
+
+      console.log('Loaded cart items from database:', cartItems);
 
       return cartItems?.map(item => {
         const product = item.products as any;
