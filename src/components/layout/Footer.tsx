@@ -1,5 +1,5 @@
 
-import { Settings } from "lucide-react";
+import { Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,7 +54,7 @@ const Footer = () => {
       } else {
         toast({
           title: "Successfully Subscribed!",
-          description: "Thank you for subscribing to our newsletter. You'll receive the latest deals and automotive tips.",
+          description: "Thank you for subscribing to our newsletter. You'll receive the latest deals and automotive innovations.",
         });
         setEmail("");
       }
@@ -76,22 +76,25 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <Settings className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Zap className="w-6 h-6 text-white" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full"></div>
               </div>
               <div>
-                <h3 className="text-lg font-bold">AutoParts Pro</h3>
+                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Auron Autospace
+                </h3>
               </div>
             </div>
             <p className="text-gray-400 mb-4">
-              Your trusted source for premium automotive parts. Quality guaranteed, 
-              fast shipping, and expert support since 2010.
+              Your trusted source for premium automotive parts and cutting-edge solutions. 
+              Innovation meets reliability since 2020.
             </p>
             <div className="text-sm text-gray-400">
-              <p>📞 1-800-AUTO-PARTS</p>
-              <p>✉️ support@autopartspro.com</p>
-              <p>📍 123 Auto Street, Detroit, MI 48201</p>
+              <p>📞 +971-55-288-0435</p>
+              <p>✉️ support@auronauto.com</p>
+              <p>📍 Dubai Marina, Dubai, United Arab Emirates</p>
             </div>
           </div>
           
@@ -99,11 +102,11 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/products" className="hover:text-orange-500 transition-colors">All Products</Link></li>
-              <li><Link to="/categories" className="hover:text-orange-500 transition-colors">Categories</Link></li>
-              <li><Link to="/brands" className="hover:text-orange-500 transition-colors">Brands</Link></li>
-              <li><Link to="/deals" className="hover:text-orange-500 transition-colors">Special Deals</Link></li>
-              <li><Link to="/new-arrivals" className="hover:text-orange-500 transition-colors">New Arrivals</Link></li>
+              <li><Link to="/products" className="hover:text-blue-400 transition-colors">All Products</Link></li>
+              <li><Link to="/categories" className="hover:text-blue-400 transition-colors">Categories</Link></li>
+              <li><Link to="/brands" className="hover:text-blue-400 transition-colors">Brands</Link></li>
+              <li><Link to="/deals" className="hover:text-blue-400 transition-colors">Special Deals</Link></li>
+              <li><Link to="/new-arrivals" className="hover:text-blue-400 transition-colors">New Arrivals</Link></li>
             </ul>
           </div>
           
@@ -111,11 +114,11 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Customer Service</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/contact" className="hover:text-orange-500 transition-colors">Contact Us</Link></li>
-              <li><Link to="/shipping" className="hover:text-orange-500 transition-colors">Shipping Info</Link></li>
-              <li><Link to="/returns" className="hover:text-orange-500 transition-colors">Returns & Exchanges</Link></li>
-              <li><Link to="/warranty" className="hover:text-orange-500 transition-colors">Warranty</Link></li>
-              <li><Link to="/faq" className="hover:text-orange-500 transition-colors">FAQ</Link></li>
+              <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact Us</Link></li>
+              <li><Link to="/shipping" className="hover:text-blue-400 transition-colors">Shipping Info</Link></li>
+              <li><Link to="/returns" className="hover:text-blue-400 transition-colors">Returns & Exchanges</Link></li>
+              <li><Link to="/warranty" className="hover:text-blue-400 transition-colors">Warranty</Link></li>
+              <li><Link to="/faq" className="hover:text-blue-400 transition-colors">FAQ</Link></li>
             </ul>
           </div>
           
@@ -123,7 +126,7 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Stay Connected</h4>
             <p className="text-gray-400 mb-4">
-              Get the latest deals, new arrivals, and automotive tips delivered to your inbox.
+              Get the latest deals, innovations, and automotive solutions delivered to your inbox.
             </p>
             <form onSubmit={handleNewsletterSubmit} className="flex">
               <input
@@ -132,12 +135,12 @@ const Footer = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-l-md focus:outline-none focus:border-orange-500 disabled:opacity-50"
+                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-l-md focus:outline-none focus:border-blue-500 disabled:opacity-50"
               />
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-r-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-r-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "..." : "Subscribe"}
               </button>
@@ -147,16 +150,16 @@ const Footer = () => {
         
         <div className="border-t border-slate-700 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between">
           <p className="text-gray-400 text-sm">
-            © 2024 AutoParts Pro. All rights reserved.
+            © 2024 Auron Autospace. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-gray-400 hover:text-orange-500 text-sm transition-colors">
+            <Link to="/privacy" className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-gray-400 hover:text-orange-500 text-sm transition-colors">
+            <Link to="/terms" className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
               Terms of Service
             </Link>
-            <Link to="/sitemap" className="text-gray-400 hover:text-orange-500 text-sm transition-colors">
+            <Link to="/sitemap" className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
               Sitemap
             </Link>
           </div>
