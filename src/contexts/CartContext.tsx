@@ -114,18 +114,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const isInitialized = useRef(false);
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
+  const isSyncingRef = useRef(false);
 
   // Load cart data when user changes or component mounts
   useEffect(() => {
     const loadCart = async () => {
-      console.log('Loading cart for user:', user?.id || 'anonymous');
+      const currentUserId = user?.id || null;
+      console.log('Loading cart for user:', currentUserId || 'anonymous');
       
       try {
         if (user) {
+          console.log('Loading cart from database...');
           const cartItems = await loadCartFromDatabase();
           dispatch({ type: 'LOAD_CART', payload: cartItems });
           console.log('Loaded cart from database:', cartItems);
         } else {
+          console.log('Loading cart from localStorage...');
           const savedCart = localStorage.getItem('cart');
           if (savedCart) {
             try {
@@ -146,32 +150,40 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const currentUserId = user?.id || null;
+    
+    // Only load cart if user changed or not initialized
     if (!isInitialized.current || previousUserIdRef.current !== currentUserId) {
+      console.log('User changed or not initialized, loading cart');
       previousUserIdRef.current = currentUserId;
-      isInitialized.current = false; // Reset to reload cart
+      isInitialized.current = false;
       loadCart();
     }
   }, [user?.id, loadCartFromDatabase]);
 
-  // Sync cart changes immediately for authenticated users
+  // Sync cart changes to database/localStorage
   useEffect(() => {
-    if (!isInitialized.current) {
+    if (!isInitialized.current || isSyncingRef.current) {
       return;
     }
 
     const syncCart = async () => {
+      isSyncingRef.current = true;
       console.log('Syncing cart changes:', state.items);
 
       try {
         if (user) {
+          console.log('Syncing to database...');
           await syncCartToDatabase(state.items);
           console.log('Cart synced to database successfully');
         } else {
+          console.log('Syncing to localStorage...');
           localStorage.setItem('cart', JSON.stringify(state.items));
           console.log('Cart synced to localStorage successfully');
         }
       } catch (error) {
         console.error('Error syncing cart:', error);
+      } finally {
+        isSyncingRef.current = false;
       }
     };
 
@@ -180,12 +192,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       clearTimeout(syncTimeoutRef.current);
     }
 
-    // For authenticated users, sync immediately, for anonymous users debounce
-    if (user) {
-      syncCart();
-    } else {
-      syncTimeoutRef.current = setTimeout(syncCart, 500);
-    }
+    // For authenticated users, sync immediately but debounced
+    // For anonymous users, also debounce
+    syncTimeoutRef.current = setTimeout(syncCart, user ? 100 : 500);
 
     return () => {
       if (syncTimeoutRef.current) {

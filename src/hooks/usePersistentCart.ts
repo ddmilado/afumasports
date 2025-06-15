@@ -19,6 +19,7 @@ export const usePersistentCart = () => {
     try {
       setIsLoading(true);
       console.log('Syncing cart items to database:', items);
+      console.log('User ID:', user.id);
       
       // First, clear all existing cart items for this user
       const { error: deleteError } = await supabase
@@ -31,6 +32,8 @@ export const usePersistentCart = () => {
         throw deleteError;
       }
 
+      console.log('Successfully cleared existing cart items');
+
       // Then insert all current cart items
       if (items.length > 0) {
         const cartItemsToInsert = items.map(item => ({
@@ -40,24 +43,29 @@ export const usePersistentCart = () => {
         }));
 
         console.log('Inserting cart items to database:', cartItemsToInsert);
-        const { error: insertError } = await supabase
+        
+        const { data, error: insertError } = await supabase
           .from('cart_items')
-          .insert(cartItemsToInsert);
+          .insert(cartItemsToInsert)
+          .select();
           
         if (insertError) {
           console.error('Error inserting cart items:', insertError);
           throw insertError;
         }
+
+        console.log('Successfully inserted cart items:', data);
       }
       
       console.log('Cart sync to database completed successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error syncing cart to database:', error);
       toast({
-        title: "Error",
-        description: "Failed to sync cart to database",
+        title: "Cart Sync Error",
+        description: `Failed to sync cart: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
+      throw error; // Re-throw to allow caller to handle
     } finally {
       setIsLoading(false);
     }
@@ -99,26 +107,31 @@ export const usePersistentCart = () => {
 
       const formattedItems = cartItems?.map(item => {
         const product = item.products as any;
+        if (!product) {
+          console.warn('Product not found for cart item:', item);
+          return null;
+        }
+        
         return {
           id: item.product_id,
-          name: product?.name || '',
-          brand: product?.brand || '',
-          partNumber: product?.part_number || '',
-          price: product?.price || 0,
+          name: product.name || '',
+          brand: product.brand || '',
+          partNumber: product.part_number || '',
+          price: product.price || 0,
           quantity: item.quantity,
-          image: product?.image_url || '/placeholder.svg',
-          inStock: product?.in_stock || false
+          image: product.image_url || '/placeholder.svg',
+          inStock: product.in_stock ?? false
         };
-      }).filter(item => item.name) || [];
+      }).filter(item => item !== null) || [];
 
       console.log('Formatted cart items loaded from database:', formattedItems);
       return formattedItems;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading cart from database:', error);
       toast({
-        title: "Error",
-        description: "Failed to load cart from database",
+        title: "Cart Load Error",
+        description: `Failed to load cart: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
       return [];
@@ -148,13 +161,14 @@ export const usePersistentCart = () => {
       }
 
       console.log('Cart cleared from database successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error clearing cart from database:', error);
       toast({
-        title: "Error",
-        description: "Failed to clear cart from database",
+        title: "Cart Clear Error",
+        description: `Failed to clear cart: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
+      throw error;
     } finally {
       setIsLoading(false);
     }
