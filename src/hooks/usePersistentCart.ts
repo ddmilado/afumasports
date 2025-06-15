@@ -83,16 +83,19 @@ export const usePersistentCart = () => {
 
       if (error) throw error;
 
-      return cartItems?.map(item => ({
-        id: item.product_id,
-        name: item.products.name,
-        brand: item.products.brand,
-        partNumber: item.products.part_number,
-        price: item.products.price,
-        quantity: item.quantity,
-        image: item.products.image_url || '/placeholder.svg',
-        inStock: item.products.in_stock || false
-      })) || [];
+      return cartItems?.map(item => {
+        const product = item.products as any;
+        return {
+          id: item.product_id,
+          name: product?.name || '',
+          brand: product?.brand || '',
+          partNumber: product?.part_number || '',
+          price: product?.price || 0,
+          quantity: item.quantity,
+          image: product?.image_url || '/placeholder.svg',
+          inStock: product?.in_stock || false
+        };
+      }) || [];
       
     } catch (error) {
       console.error('Error loading cart from database:', error);

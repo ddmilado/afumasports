@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,13 +43,16 @@ const Account = () => {
 
       if (error) throw error;
 
-      setWishlistItems(data?.map(item => ({
-        id: item.product_id,
-        name: item.products.name,
-        brand: item.products.brand,
-        price: item.products.price,
-        image: item.products.image_url || '/placeholder.svg'
-      })) || []);
+      setWishlistItems(data?.map(item => {
+        const product = item.products as any;
+        return {
+          id: item.product_id,
+          name: product?.name || '',
+          brand: product?.brand || '',
+          price: product?.price || 0,
+          image: product?.image_url || '/placeholder.svg'
+        };
+      }) || []);
     } catch (error) {
       console.error('Error loading wishlist items:', error);
     }
