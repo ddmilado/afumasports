@@ -82,7 +82,7 @@ const Contact = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 pt-32">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
           <p className="text-xl text-gray-600">
             Have questions? We're here to help. Reach out to our team of automotive experts.
@@ -149,7 +149,7 @@ const Contact = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
                 >
                   <option>General Inquiry</option>
                   <option>Order Support</option>
@@ -174,7 +174,7 @@ const Contact = () => {
               
               <Button 
                 type="submit"
-                className="w-full bg-orange-500 hover:bg-orange-600"
+                className="w-full bg-slate-500 hover:bg-slate-600"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
@@ -189,43 +189,43 @@ const Contact = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <MapPin className="w-6 h-6 text-orange-500 mt-1" />
+                  <MapPin className="w-6 h-6 text-slate-500 mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
                     <p className="text-gray-600">
-                      123 Auto Street<br />
-                      Detroit, MI 48201<br />
-                      United States
+                      Dubai Marina<br />
+                      Dubai, United Arab Emirates<br />
+                      P.O. Box 12345
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Phone className="w-6 h-6 text-orange-500 mt-1" />
+                  <Phone className="w-6 h-6 text-slate-500 mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">1-800-AUTO-PARTS</p>
-                    <p className="text-gray-600">(1-800-288-6727)</p>
+                    <p className="text-gray-600">+971-55-288-0435</p>
+                    <p className="text-gray-600">WhatsApp Available</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Mail className="w-6 h-6 text-orange-500 mt-1" />
+                  <Mail className="w-6 h-6 text-slate-500 mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">support@autopartspro.com</p>
-                    <p className="text-gray-600">sales@autopartspro.com</p>
+                    <p className="text-gray-600">support@auronauto.com</p>
+                    <p className="text-gray-600">sales@auronauto.com</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Clock className="w-6 h-6 text-orange-500 mt-1" />
+                  <Clock className="w-6 h-6 text-slate-500 mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Business Hours</h3>
                     <p className="text-gray-600">
-                      Monday - Friday: 8:00 AM - 8:00 PM EST<br />
-                      Saturday: 9:00 AM - 6:00 PM EST<br />
-                      Sunday: 10:00 AM - 4:00 PM EST
+                      Sunday - Thursday: 9:00 AM - 7:00 PM GST<br />
+                      Friday: 2:00 PM - 7:00 PM GST<br />
+                      Saturday: 9:00 AM - 6:00 PM GST
                     </p>
                   </div>
                 </div>
@@ -236,16 +236,16 @@ const Contact = () => {
             <div className="bg-white rounded-lg shadow-md p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Help</h3>
               <div className="space-y-3">
-                <a href="/faq" className="block text-orange-500 hover:text-orange-600">
+                <a href="/faq" className="block text-slate-500 hover:text-slate-600">
                   → Frequently Asked Questions
                 </a>
-                <a href="/shipping" className="block text-orange-500 hover:text-orange-600">
+                <a href="/shipping" className="block text-slate-500 hover:text-slate-600">
                   → Shipping Information
                 </a>
-                <a href="/returns" className="block text-orange-500 hover:text-orange-600">
+                <a href="/returns" className="block text-slate-500 hover:text-slate-600">
                   → Returns & Exchanges
                 </a>
-                <a href="/warranty" className="block text-orange-500 hover:text-orange-600">
+                <a href="/warranty" className="block text-slate-500 hover:text-slate-600">
                   → Warranty Information
                 </a>
               </div>

@@ -37,7 +37,7 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3">
             <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <Zap className="w-7 h-7 text-white" />
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full"></div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-slate-500 rounded-full"></div>
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -121,6 +121,7 @@ const Header = () => {
             <li><Link to="/categories/brakes" className="hover:text-blue-400 transition-colors">Brakes</Link></li>
             <li><Link to="/categories/suspension" className="hover:text-blue-400 transition-colors">Suspension</Link></li>
             <li><Link to="/categories/electrical" className="hover:text-blue-400 transition-colors">Electrical</Link></li>
+            <li><Link to="/categories/autocare" className="hover:text-blue-400 transition-colors">Auto Care</Link></li>
             <li><Link to="/about" className="hover:text-blue-400 transition-colors">About</Link></li>
             <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact</Link></li>
           </ul>

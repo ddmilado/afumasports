@@ -64,7 +64,7 @@ const ProductCard = ({ id, name, brand, partNumber, price, originalPrice, image,
         
         <div className="p-4">
           <p className="text-sm text-gray-500 mb-1">{brand}</p>
-          <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
+          <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-slate-500 transition-colors">
             {name}
           </h3>
           <p className="text-xs text-gray-500 mb-2">Part #: {partNumber}</p>
@@ -87,7 +87,7 @@ const ProductCard = ({ id, name, brand, partNumber, price, originalPrice, image,
           
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-orange-500">${price}</span>
+              <span className="text-lg font-bold text-slate-500">${price}</span>
               {originalPrice && originalPrice > price && (
                 <span className="text-sm text-gray-500 line-through">${originalPrice}</span>
               )}
@@ -97,7 +97,7 @@ const ProductCard = ({ id, name, brand, partNumber, price, originalPrice, image,
           <Button
             onClick={handleAddToCart}
             disabled={!inStock}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-slate-500 hover:bg-slate-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
             {inStock ? "Add to Cart" : "Out of Stock"}

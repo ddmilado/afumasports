@@ -30,6 +30,11 @@ import NotFound from "./pages/NotFound";
 import Sitemap from "./pages/Sitemap";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import CryptoPayment from "./pages/CryptoPayment";
+import Engine from "./pages/categories/Engine";
+import Brakes from "./pages/categories/Brakes";
+import Suspension from "./pages/categories/Suspension";
+import Electrical from "./pages/categories/Electrical";
+import AutoCare from "./pages/categories/AutoCare";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +62,11 @@ const AppContent = () => {
           <Route path="/terms" element={<Terms />} />
           <Route path="/warranty" element={<Warranty />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/categories/engine" element={<Engine />} />
+          <Route path="/categories/brakes" element={<Brakes />} />
+          <Route path="/categories/suspension" element={<Suspension />} />
+          <Route path="/categories/electrical" element={<Electrical />} />
+          <Route path="/categories/autocare" element={<AutoCare />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
