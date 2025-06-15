@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,9 +42,16 @@ const Products = () => {
     }
   }, [searchParams]);
 
-  const { data: products, isLoading, error } = useProducts(searchQuery, selectedCategory);
+  // Pass vehicle parameters to the hook for precise database searching
+  const { data: products, isLoading, error } = useProducts(
+    searchQuery, 
+    selectedCategory, 
+    vehicleYear, 
+    vehicleMake, 
+    vehicleModel
+  );
 
-  // Filter products by additional criteria including vehicle compatibility
+  // Filter products by additional criteria (price and brand)
   const filteredProducts = products?.filter(product => {
     let matches = true;
 
@@ -59,26 +65,6 @@ const Products = () => {
 
     if (priceMax && product.price > parseFloat(priceMax)) {
       matches = false;
-    }
-
-    // Vehicle compatibility filtering
-    if (vehicleYear || vehicleMake || vehicleModel) {
-      const productDescription = (product.description || '').toLowerCase();
-      const productName = product.name.toLowerCase();
-      
-      // Check if product description or name contains vehicle information
-      if (vehicleYear && !productDescription.includes(vehicleYear) && !productName.includes(vehicleYear)) {
-        // For now, we'll be more lenient and not filter out if year isn't found
-        // This is because our sample data doesn't have specific year compatibility
-      }
-      
-      if (vehicleMake && !productDescription.includes(vehicleMake.toLowerCase()) && !productName.includes(vehicleMake.toLowerCase())) {
-        // Similarly lenient for make
-      }
-      
-      if (vehicleModel && !productDescription.includes(vehicleModel.toLowerCase()) && !productName.includes(vehicleModel.toLowerCase())) {
-        // Similarly lenient for model
-      }
     }
 
     return matches;
@@ -123,7 +109,7 @@ const Products = () => {
             )}
             {(vehicleYear || vehicleMake || vehicleModel) && (
               <p className="text-sm text-blue-600 mt-1">
-                Filtering for: {vehicleYear} {vehicleMake} {vehicleModel}
+                Parts for: {vehicleYear} {vehicleMake} {vehicleModel}
               </p>
             )}
           </div>
@@ -168,6 +154,7 @@ const Products = () => {
                       setVehicleYear('');
                       setVehicleMake('');
                       setVehicleModel('');
+                      setSearchQuery('');
                       window.history.replaceState({}, '', '/products');
                     }}
                   >
@@ -326,6 +313,11 @@ const Products = () => {
                 {filteredProducts.length === 0 && !isLoading && (
                   <div className="text-center py-8">
                     <p className="text-gray-600">No products found matching your criteria.</p>
+                    {(vehicleYear || vehicleMake || vehicleModel) && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        Try searching for a different vehicle or browse all products.
+                      </p>
+                    )}
                   </div>
                 )}
               </>

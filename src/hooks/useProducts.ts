@@ -16,16 +16,28 @@ export interface Product {
   description?: string;
 }
 
-export const useProducts = (searchQuery?: string, category?: string) => {
+export const useProducts = (searchQuery?: string, category?: string, vehicleYear?: string, vehicleMake?: string, vehicleModel?: string) => {
   return useQuery({
-    queryKey: ['products', searchQuery, category],
+    queryKey: ['products', searchQuery, category, vehicleYear, vehicleMake, vehicleModel],
     queryFn: async () => {
       let query = supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (searchQuery && searchQuery.trim()) {
+      // If we have vehicle information, create a specific search
+      if (vehicleYear || vehicleMake || vehicleModel) {
+        const vehicleSearchTerms = [];
+        if (vehicleYear) vehicleSearchTerms.push(vehicleYear);
+        if (vehicleMake) vehicleSearchTerms.push(vehicleMake);
+        if (vehicleModel) vehicleSearchTerms.push(vehicleModel);
+        
+        const vehicleSearchQuery = vehicleSearchTerms.join(' ');
+        
+        // Search for products that contain vehicle information in name or description
+        query = query.or(`name.ilike.%${vehicleSearchQuery}%,description.ilike.%${vehicleSearchQuery}%,brand.ilike.%${vehicleMake || ''}%`);
+      } else if (searchQuery && searchQuery.trim()) {
+        // Regular search when no vehicle info
         query = query.or(`name.ilike.%${searchQuery}%,brand.ilike.%${searchQuery}%,part_number.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
       }
 
