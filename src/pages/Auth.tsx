@@ -1,20 +1,115 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  const captcha = useRef<HCaptcha>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle authentication logic here
-    console.log(isSignUp ? 'Sign up submitted' : 'Sign in submitted');
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.target as HTMLFormElement);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const firstName = formData.get('firstName') as string;
+    const lastName = formData.get('lastName') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    try {
+      if (isSignUp) {
+        // Validate password confirmation
+        if (password !== confirmPassword) {
+          toast({
+            title: "Error",
+            description: "Passwords do not match",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Check if captcha token is present for sign up
+        if (!captchaToken) {
+          toast({
+            title: "Error", 
+            description: "Please complete the CAPTCHA verification",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { 
+            captchaToken,
+            data: {
+              first_name: firstName,
+              last_name: lastName
+            }
+          },
+        });
+
+        if (error) {
+          toast({
+            title: "Sign up failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success!",
+            description: "Please check your email to confirm your account.",
+          });
+        }
+
+        // Reset captcha after sign up attempt
+        if (captcha.current) {
+          captcha.current.resetCaptcha();
+          setCaptchaToken(null);
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          toast({
+            title: "Sign in failed",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Welcome back!",
+            description: "You have been signed in successfully.",
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -136,6 +231,25 @@ const Auth = () => {
                 </div>
               </div>
             )}
+
+            {/* hCaptcha - only show for sign up */}
+            {isSignUp && (
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captcha}
+                  sitekey="10000000-ffff-ffff-ffff-000000000001"
+                  onVerify={(token) => {
+                    setCaptchaToken(token)
+                  }}
+                  onExpire={() => {
+                    setCaptchaToken(null)
+                  }}
+                  onError={() => {
+                    setCaptchaToken(null)
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {!isSignUp && (
@@ -164,8 +278,9 @@ const Auth = () => {
             <Button
               type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+              disabled={isSubmitting || (isSignUp && !captchaToken)}
             >
-              {isSignUp ? 'Create Account' : 'Sign In'}
+              {isSubmitting ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign In')}
             </Button>
           </div>
 
