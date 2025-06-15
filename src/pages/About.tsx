@@ -11,7 +11,7 @@ const About = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-16 pt-32">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">About Auron Autospace</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">About Auron Auto</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Your trusted partner for premium automotive parts and innovative solutions since 2020. 
             We're committed to providing cutting-edge parts, expert service, and competitive prices 
@@ -56,7 +56,7 @@ const About = () => {
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
             <p className="text-gray-600 mb-4">
-              Founded in 2020 in the heart of Dubai, Auron Autospace emerged from a vision to 
+              Founded in 2020 in the heart of Dubai, Auron Auto emerged from a vision to 
               revolutionize the automotive parts industry in the UAE and beyond. We started as a 
               tech-driven operation with a clear mission: provide premium automotive parts with 
               innovative solutions and exceptional customer service.
@@ -75,7 +75,7 @@ const About = () => {
           <div>
             <img 
               src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&h=400&fit=crop" 
-              alt="Auron Autospace facility"
+              alt="Auron Auto facility"
               className="rounded-lg shadow-md w-full h-full object-cover"
             />
           </div>

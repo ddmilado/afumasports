@@ -41,9 +41,9 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Auron Autospace
+                Auron Auto
               </h1>
-              <p className="text-xs text-gray-400">Premium Auto Parts & Innovation</p>
+              <p className="text-xs text-gray-400">Premium Auto Parts & Care</p>
             </div>
           </Link>
           

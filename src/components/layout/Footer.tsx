@@ -83,7 +83,7 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Auron Autospace
+                  Auron Auto
                 </h3>
               </div>
             </div>
