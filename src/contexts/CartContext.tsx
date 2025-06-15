@@ -122,6 +122,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
   const isSyncing = useRef(false);
+  const lastSyncedItemsRef = useRef<string>('');
 
   // Update loading state when persistent loading changes
   useEffect(() => {
@@ -195,6 +196,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // Check if items actually changed to prevent unnecessary syncs
+    const currentItemsString = JSON.stringify(state.items);
+    if (lastSyncedItemsRef.current === currentItemsString) {
+      console.log('Items unchanged, skipping sync');
+      return;
+    }
+
     const syncCart = async () => {
       if (isSyncing.current) return;
       
@@ -211,6 +219,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           localStorage.setItem('cart', JSON.stringify(state.items));
           console.log('Cart synced to localStorage successfully');
         }
+        lastSyncedItemsRef.current = currentItemsString;
       } catch (error) {
         console.error('Error syncing cart:', error);
       } finally {
