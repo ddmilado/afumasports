@@ -30,7 +30,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-transparent backdrop-blur-sm sticky top-0 z-50">
       {/* Top Banner - Commented out */}
       {/* 
       <div className="bg-slate-900 text-white py-2">
@@ -48,7 +48,7 @@ const Header = () => {
             <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">A</span>
             </div>
-            <span className="text-xl font-bold text-slate-900">AutoParts</span>
+            <span className="text-xl font-bold text-white">AutoParts</span>
           </Link>
 
           {/* Search Bar - Desktop */}
@@ -59,7 +59,7 @@ const Header = () => {
                 placeholder="Search for parts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-10"
+                className="pr-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/70"
               />
               <Button
                 type="submit"
@@ -76,14 +76,14 @@ const Header = () => {
             {/* User Menu */}
             {user ? (
               <div className="hidden md:flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Hello, {user.email}</span>
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <span className="text-sm text-white/80">Hello, {user.email}</span>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-white hover:bg-white/10">
                   Sign Out
                 </Button>
               </div>
             ) : (
               <Link to="/auth">
-                <Button variant="ghost" size="sm" className="hidden md:flex items-center space-x-1">
+                <Button variant="ghost" size="sm" className="hidden md:flex items-center space-x-1 text-white hover:bg-white/10">
                   <User className="w-4 h-4" />
                   <span>Sign In</span>
                 </Button>
@@ -92,7 +92,7 @@ const Header = () => {
 
             {/* Cart */}
             <Link to="/cart" className="relative">
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="sm" className="relative text-white hover:bg-white/10">
                 <ShoppingCart className="w-5 h-5" />
                 {itemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -106,7 +106,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="md:hidden text-white hover:bg-white/10"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -122,7 +122,7 @@ const Header = () => {
               placeholder="Search for parts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10"
+              className="pr-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/70"
             />
             <Button
               type="submit"
@@ -136,37 +136,37 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 border-t pt-4">
+          <div className="md:hidden mt-4 border-t border-white/20 pt-4">
             <nav className="space-y-2">
-              <Link to="/products" className="block py-2 text-gray-700 hover:text-orange-500">
+              <Link to="/products" className="block py-2 text-white/80 hover:text-white">
                 All Products
               </Link>
-              <Link to="/categories" className="block py-2 text-gray-700 hover:text-orange-500">
+              <Link to="/categories" className="block py-2 text-white/80 hover:text-white">
                 Categories
               </Link>
-              <Link to="/brands" className="block py-2 text-gray-700 hover:text-orange-500">
+              <Link to="/brands" className="block py-2 text-white/80 hover:text-white">
                 Brands
               </Link>
-              <Link to="/about" className="block py-2 text-gray-700 hover:text-orange-500">
+              <Link to="/about" className="block py-2 text-white/80 hover:text-white">
                 About
               </Link>
-              <Link to="/contact" className="block py-2 text-gray-700 hover:text-orange-500">
+              <Link to="/contact" className="block py-2 text-white/80 hover:text-white">
                 Contact
               </Link>
               {user ? (
-                <div className="space-y-2 pt-2 border-t">
-                  <Link to="/account" className="block py-2 text-gray-700 hover:text-orange-500">
+                <div className="space-y-2 pt-2 border-t border-white/20">
+                  <Link to="/account" className="block py-2 text-white/80 hover:text-white">
                     My Account
                   </Link>
                   <button
                     onClick={handleSignOut}
-                    className="block py-2 text-gray-700 hover:text-orange-500 w-full text-left"
+                    className="block py-2 text-white/80 hover:text-white w-full text-left"
                   >
                     Sign Out
                   </button>
                 </div>
               ) : (
-                <Link to="/auth" className="block py-2 text-gray-700 hover:text-orange-500">
+                <Link to="/auth" className="block py-2 text-white/80 hover:text-white">
                   Sign In / Register
                 </Link>
               )}
@@ -176,31 +176,31 @@ const Header = () => {
       </div>
 
       {/* Navigation Bar */}
-      <nav className="bg-gray-50 border-t hidden md:block">
+      <nav className="bg-white/10 backdrop-blur-sm border-t border-white/20 hidden md:block">
         <div className="container mx-auto px-4">
           <ul className="flex space-x-8 py-3">
             <li>
-              <Link to="/products" className="text-gray-700 hover:text-orange-500 font-medium">
+              <Link to="/products" className="text-white/80 hover:text-white font-medium">
                 All Products
               </Link>
             </li>
             <li>
-              <Link to="/categories" className="text-gray-700 hover:text-orange-500 font-medium">
+              <Link to="/categories" className="text-white/80 hover:text-white font-medium">
                 Categories
               </Link>
             </li>
             <li>
-              <Link to="/brands" className="text-gray-700 hover:text-orange-500 font-medium">
+              <Link to="/brands" className="text-white/80 hover:text-white font-medium">
                 Brands
               </Link>
             </li>
             <li>
-              <Link to="/about" className="text-gray-700 hover:text-orange-500 font-medium">
+              <Link to="/about" className="text-white/80 hover:text-white font-medium">
                 About
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="text-gray-700 hover:text-orange-500 font-medium">
+              <Link to="/contact" className="text-white/80 hover:text-white font-medium">
                 Contact
               </Link>
             </li>
