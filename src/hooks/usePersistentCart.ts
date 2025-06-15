@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,40 +20,56 @@ export const usePersistentCart = () => {
       console.log('Syncing cart items to database:', items);
       console.log('User ID:', user.id);
       
-      // First, clear all existing cart items for this user
-      const { error: deleteError } = await supabase
-        .from('cart_items')
-        .delete()
-        .eq('user_id', user.id);
+      if (items.length === 0) {
+        // If cart is empty, just clear all items for this user
+        const { error: deleteError } = await supabase
+          .from('cart_items')
+          .delete()
+          .eq('user_id', user.id);
 
-      if (deleteError) {
-        console.error('Error clearing existing cart items:', deleteError);
-        throw deleteError;
+        if (deleteError) {
+          console.error('Error clearing cart items:', deleteError);
+          throw deleteError;
+        }
+        console.log('Cart cleared successfully');
+        return;
       }
 
-      console.log('Successfully cleared existing cart items');
+      // Use upsert to handle existing items properly
+      const cartItemsToUpsert = items.map(item => ({
+        user_id: user.id,
+        product_id: item.id,
+        quantity: item.quantity
+      }));
 
-      // Then insert all current cart items (only if there are items)
-      if (items.length > 0) {
-        const cartItemsToInsert = items.map(item => ({
-          user_id: user.id,
-          product_id: item.id,
-          quantity: item.quantity
-        }));
-
-        console.log('Inserting cart items to database:', cartItemsToInsert);
+      console.log('Upserting cart items to database:', cartItemsToUpsert);
+      
+      const { data, error: upsertError } = await supabase
+        .from('cart_items')
+        .upsert(cartItemsToUpsert, { 
+          onConflict: 'user_id,product_id',
+          ignoreDuplicates: false 
+        })
+        .select();
         
-        const { data, error: insertError } = await supabase
-          .from('cart_items')
-          .insert(cartItemsToInsert)
-          .select();
-          
-        if (insertError) {
-          console.error('Error inserting cart items:', insertError);
-          throw insertError;
-        }
+      if (upsertError) {
+        console.error('Error upserting cart items:', upsertError);
+        throw upsertError;
+      }
 
-        console.log('Successfully inserted cart items:', data);
+      console.log('Successfully upserted cart items:', data);
+
+      // Remove any items from database that are no longer in the cart
+      const currentProductIds = items.map(item => item.id);
+      const { error: cleanupError } = await supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', user.id)
+        .not('product_id', 'in', `(${currentProductIds.map(id => `"${id}"`).join(',')})`);
+
+      if (cleanupError) {
+        console.error('Error cleaning up old cart items:', cleanupError);
+        // Don't throw here as the main operation succeeded
       }
       
       console.log('Cart sync to database completed successfully');

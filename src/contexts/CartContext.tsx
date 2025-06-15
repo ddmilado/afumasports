@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useReducer, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePersistentCart } from '@/hooks/usePersistentCart';
@@ -115,6 +114,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const isLoading = useRef(false);
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
+  const isSyncing = useRef(false);
 
   // Load cart data when user changes or component mounts
   useEffect(() => {
@@ -175,13 +175,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Sync cart changes to database/localStorage (only for user actions, not initial loads)
   useEffect(() => {
-    // Don't sync if we're not initialized, currently loading, or if this is the initial load
-    if (!isInitialized.current || isLoading.current) {
-      console.log('Skipping sync - not initialized or loading');
+    // Don't sync if we're not initialized, currently loading, or already syncing
+    if (!isInitialized.current || isLoading.current || isSyncing.current) {
+      console.log('Skipping sync - not initialized, loading, or already syncing');
       return;
     }
 
     const syncCart = async () => {
+      if (isSyncing.current) return;
+      
+      isSyncing.current = true;
       console.log('Syncing cart changes:', state.items);
 
       try {
@@ -196,6 +199,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error('Error syncing cart:', error);
+      } finally {
+        isSyncing.current = false;
       }
     };
 
