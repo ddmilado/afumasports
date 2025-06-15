@@ -115,19 +115,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const previousUserIdRef = useRef<string | null>(null);
 
-  // Load cart data when component mounts or user changes
+  // Load cart data when user changes or component mounts
   useEffect(() => {
     const loadCart = async () => {
       console.log('Loading cart for user:', user?.id || 'anonymous');
       
       try {
         if (user) {
-          // Load from database for authenticated users
           const cartItems = await loadCartFromDatabase();
           dispatch({ type: 'LOAD_CART', payload: cartItems });
           console.log('Loaded cart from database:', cartItems);
         } else {
-          // Load from localStorage for anonymous users
           const savedCart = localStorage.getItem('cart');
           if (savedCart) {
             try {
@@ -147,32 +145,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       isInitialized.current = true;
     };
 
-    // Load cart when:
-    // 1. First initialization
-    // 2. User changes (login/logout)
     const currentUserId = user?.id || null;
     if (!isInitialized.current || previousUserIdRef.current !== currentUserId) {
       previousUserIdRef.current = currentUserId;
+      isInitialized.current = false; // Reset to reload cart
       loadCart();
     }
   }, [user?.id, loadCartFromDatabase]);
 
-  // Sync cart changes to database/localStorage
+  // Sync cart changes immediately for authenticated users
   useEffect(() => {
-    // Don't sync if not initialized yet
     if (!isInitialized.current) {
       return;
     }
 
-    // Clear any existing timeout
-    if (syncTimeoutRef.current) {
-      clearTimeout(syncTimeoutRef.current);
-    }
-
-    // Sync immediately for authenticated users, debounce for anonymous
-    const syncDelay = user ? 100 : 500;
-
-    syncTimeoutRef.current = setTimeout(async () => {
+    const syncCart = async () => {
       console.log('Syncing cart changes:', state.items);
 
       try {
@@ -186,7 +173,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error('Error syncing cart:', error);
       }
-    }, syncDelay);
+    };
+
+    // Clear any existing timeout
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+
+    // For authenticated users, sync immediately, for anonymous users debounce
+    if (user) {
+      syncCart();
+    } else {
+      syncTimeoutRef.current = setTimeout(syncCart, 500);
+    }
 
     return () => {
       if (syncTimeoutRef.current) {
@@ -219,7 +218,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     console.log('Clearing cart after successful checkout');
     dispatch({ type: 'CLEAR_CART_AFTER_CHECKOUT' });
     
-    // Clear from database/localStorage as well
     try {
       if (user) {
         await clearCartFromDatabase();

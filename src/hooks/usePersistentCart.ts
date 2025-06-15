@@ -20,56 +20,33 @@ export const usePersistentCart = () => {
       setIsLoading(true);
       console.log('Syncing cart items to database:', items);
       
-      // Get current cart items from database to determine what to delete
-      const { data: currentItems, error: fetchError } = await supabase
+      // First, clear all existing cart items for this user
+      const { error: deleteError } = await supabase
         .from('cart_items')
-        .select('product_id')
+        .delete()
         .eq('user_id', user.id);
 
-      if (fetchError) {
-        console.error('Error fetching current cart items:', fetchError);
-        throw fetchError;
+      if (deleteError) {
+        console.error('Error clearing existing cart items:', deleteError);
+        throw deleteError;
       }
 
-      // Get product IDs that should be in the cart
-      const newProductIds = items.map(item => item.id);
-      const currentProductIds = currentItems?.map(item => item.product_id) || [];
-
-      // Delete items that are no longer in local cart
-      const itemsToDelete = currentProductIds.filter(id => !newProductIds.includes(id));
-      
-      if (itemsToDelete.length > 0) {
-        console.log('Deleting items from database:', itemsToDelete);
-        const { error: deleteError } = await supabase
-          .from('cart_items')
-          .delete()
-          .in('product_id', itemsToDelete)
-          .eq('user_id', user.id);
-          
-        if (deleteError) {
-          console.error('Error deleting cart items:', deleteError);
-          throw deleteError;
-        }
-      }
-
-      // Upsert current cart items
+      // Then insert all current cart items
       if (items.length > 0) {
-        const cartItemsToUpsert = items.map(item => ({
+        const cartItemsToInsert = items.map(item => ({
           user_id: user.id,
           product_id: item.id,
           quantity: item.quantity
         }));
 
-        console.log('Upserting items to database:', cartItemsToUpsert);
-        const { error: upsertError } = await supabase
+        console.log('Inserting cart items to database:', cartItemsToInsert);
+        const { error: insertError } = await supabase
           .from('cart_items')
-          .upsert(cartItemsToUpsert, {
-            onConflict: 'user_id,product_id'
-          });
+          .insert(cartItemsToInsert);
           
-        if (upsertError) {
-          console.error('Error upserting cart items:', upsertError);
-          throw upsertError;
+        if (insertError) {
+          console.error('Error inserting cart items:', insertError);
+          throw insertError;
         }
       }
       
@@ -132,9 +109,9 @@ export const usePersistentCart = () => {
           image: product?.image_url || '/placeholder.svg',
           inStock: product?.in_stock || false
         };
-      }).filter(item => item.name) || []; // Filter out items with missing product data
+      }).filter(item => item.name) || [];
 
-      console.log('Formatted cart items:', formattedItems);
+      console.log('Formatted cart items loaded from database:', formattedItems);
       return formattedItems;
       
     } catch (error) {
