@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -22,11 +21,12 @@ const PaymentMethods = ({ selectedCountry, shippingAddress, onPaymentSuccess }: 
   const [isRecurring, setIsRecurring] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Crypto wallet addresses - replace with your actual addresses
+  // Crypto wallet addresses
   const cryptoWallets = {
-    solana: "YOUR_SOLANA_WALLET_ADDRESS",
-    usdc_solana: "YOUR_USDC_SOLANA_WALLET_ADDRESS", 
-    ethereum: "YOUR_ETHEREUM_WALLET_ADDRESS"
+    solana: "6xW1DrZgrxZZJJP2Kx2xSKrCFJ98j9t2S8HwM6RHTg6c",
+    usdc_solana: "6xW1DrZgrxZZJJP2Kx2xSKrCFJ98j9t2S8HwM6RHTg6c", 
+    ethereum: "0xc42788849Fed7E56880E27782C1FA50DEf037c21",
+    bitcoin: "bc1qkeldyrvc6xssy0hnec9d9lydx7vue0w507wm33"
   };
 
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);

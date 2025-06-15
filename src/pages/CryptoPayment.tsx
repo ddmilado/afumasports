@@ -32,7 +32,8 @@ const CryptoPayment = () => {
   const cryptoOptions = [
     { id: "solana", name: "Solana (SOL)", address: cryptoWallets.solana },
     { id: "usdc_solana", name: "USDC (Solana)", address: cryptoWallets.usdc_solana },
-    { id: "ethereum", name: "Ethereum (ETH)", address: cryptoWallets.ethereum }
+    { id: "ethereum", name: "Ethereum (ETH)", address: cryptoWallets.ethereum },
+    { id: "bitcoin", name: "Bitcoin (BTC)", address: cryptoWallets.bitcoin }
   ];
 
   const subtotal = cartState.total;
