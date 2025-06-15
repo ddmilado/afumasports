@@ -6,6 +6,7 @@ import { User, Package, MapPin, Settings, Heart, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/hooks/useOrders";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ const Account = () => {
   const { user } = useAuth();
   const { orders, isLoading: ordersLoading } = useOrders();
   const { favorites, loadFavorites } = useFavorites();
+  const { addItem } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
@@ -35,8 +37,10 @@ const Account = () => {
             id,
             name,
             brand,
+            part_number,
             price,
-            image_url
+            image_url,
+            in_stock
           )
         `)
         .eq('user_id', user.id);
@@ -49,8 +53,10 @@ const Account = () => {
           id: item.product_id,
           name: product?.name || '',
           brand: product?.brand || '',
+          partNumber: product?.part_number || '',
           price: product?.price || 0,
-          image: product?.image_url || '/placeholder.svg'
+          image: product?.image_url || '/placeholder.svg',
+          inStock: product?.in_stock || false
         };
       }) || []);
     } catch (error) {
@@ -144,6 +150,36 @@ const Account = () => {
       toast({
         title: "Error",
         description: "Failed to remove item from wishlist",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addToCartFromWishlist = async (item: any) => {
+    try {
+      // Add to cart
+      addItem({
+        id: item.id,
+        name: item.name,
+        brand: item.brand,
+        partNumber: item.partNumber,
+        price: item.price,
+        image: item.image,
+        inStock: item.inStock
+      });
+
+      // Remove from wishlist
+      await removeFavorite(item.id);
+
+      toast({
+        title: "Added to cart",
+        description: "Item moved from wishlist to cart",
+      });
+    } catch (error) {
+      console.error('Error adding to cart from wishlist:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart",
         variant: "destructive",
       });
     }
@@ -389,8 +425,13 @@ const Account = () => {
                             <h3 className="font-semibold text-gray-900 mb-2">{item.name}</h3>
                             <p className="text-lg font-bold text-orange-500 mb-4">${item.price}</p>
                             <div className="space-y-2">
-                              <Button className="w-full bg-orange-500 hover:bg-orange-600" size="sm">
-                                Add to Cart
+                              <Button 
+                                className="w-full bg-orange-500 hover:bg-orange-600" 
+                                size="sm"
+                                onClick={() => addToCartFromWishlist(item)}
+                                disabled={!item.inStock}
+                              >
+                                {item.inStock ? 'Add to Cart' : 'Out of Stock'}
                               </Button>
                               <Button 
                                 variant="outline" 

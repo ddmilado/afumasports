@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -136,9 +135,40 @@ export const usePersistentCart = () => {
     }
   };
 
+  const clearCartFromDatabase = async () => {
+    if (!user) return;
+
+    try {
+      setIsLoading(true);
+      console.log('Clearing cart from database for user:', user.id);
+      
+      const { error } = await supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error clearing cart from database:', error);
+        throw error;
+      }
+
+      console.log('Cart cleared from database successfully');
+    } catch (error) {
+      console.error('Error clearing cart from database:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear cart from database",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     syncCartToDatabase,
     loadCartFromDatabase,
+    clearCartFromDatabase,
     isLoading
   };
 };

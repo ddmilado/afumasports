@@ -25,6 +25,7 @@ type CartAction =
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
+  | { type: 'CLEAR_CART_AFTER_CHECKOUT' }
   | { type: 'LOAD_CART'; payload: CartItem[] };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
@@ -65,6 +66,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'CLEAR_CART':
+    case 'CLEAR_CART_AFTER_CHECKOUT':
       return { items: [], total: 0, itemCount: 0 };
     
     case 'LOAD_CART':
@@ -87,6 +89,7 @@ interface CartContextType {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  clearCartAfterCheckout: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -101,7 +104,7 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const { syncCartToDatabase, loadCartFromDatabase } = usePersistentCart();
+  const { syncCartToDatabase, loadCartFromDatabase, clearCartFromDatabase } = usePersistentCart();
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     total: 0,
@@ -198,8 +201,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: 'CLEAR_CART' });
   }, []);
 
+  const clearCartAfterCheckout = useCallback(async () => {
+    console.log('Clearing cart after successful checkout');
+    dispatch({ type: 'CLEAR_CART_AFTER_CHECKOUT' });
+    
+    // Clear from database/localStorage as well
+    if (user) {
+      try {
+        await clearCartFromDatabase();
+      } catch (error) {
+        console.error('Error clearing cart from database:', error);
+      }
+    } else {
+      localStorage.removeItem('cart');
+    }
+  }, [user, clearCartFromDatabase]);
+
   return (
-    <CartContext.Provider value={{ state, addItem, removeItem, updateQuantity, clearCart }}>
+    <CartContext.Provider value={{ state, addItem, removeItem, updateQuantity, clearCart, clearCartAfterCheckout }}>
       {children}
     </CartContext.Provider>
   );
