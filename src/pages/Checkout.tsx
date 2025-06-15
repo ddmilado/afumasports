@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CreditCard, Lock, Truck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -16,6 +17,20 @@ const Checkout = () => {
   const { state: cartState } = useCart();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+
+  // Form states
+  const [selectedCountry, setSelectedCountry] = useState('');
+
+  const allowedCountries = [
+    { code: 'AE', name: 'UAE' },
+    { code: 'NG', name: 'Nigeria' },
+    { code: 'GH', name: 'Ghana' },
+    { code: 'CM', name: 'Cameroon' },
+    { code: 'BJ', name: 'Benin Rep' },
+    { code: 'TG', name: 'Togo' },
+    { code: 'CF', name: 'CAR' },
+    { code: 'GA', name: 'Gabon' }
+  ];
 
   useEffect(() => {
     if (!loading && !user) {
@@ -125,7 +140,7 @@ const Checkout = () => {
                       </div>
                       <div>
                         <Label htmlFor="state">State/Province</Label>
-                        <Input id="state" type="text" required placeholder="e.g., CA, NY, ON" />
+                        <Input id="state" type="text" required placeholder="e.g., Lagos, Dubai, Accra" />
                       </div>
                       <div>
                         <Label htmlFor="zip">ZIP/Postal Code</Label>
@@ -133,22 +148,18 @@ const Checkout = () => {
                       </div>
                       <div>
                         <Label htmlFor="country">Country</Label>
-                        <select id="country" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" required>
-                          <option value="">Select Country</option>
-                          <option value="US">United States</option>
-                          <option value="CA">Canada</option>
-                          <option value="MX">Mexico</option>
-                          <option value="GB">United Kingdom</option>
-                          <option value="AU">Australia</option>
-                          <option value="DE">Germany</option>
-                          <option value="FR">France</option>
-                          <option value="IT">Italy</option>
-                          <option value="ES">Spain</option>
-                          <option value="JP">Japan</option>
-                          <option value="BR">Brazil</option>
-                          <option value="IN">India</option>
-                          <option value="ZA">South Africa</option>
-                        </select>
+                        <Select value={selectedCountry} onValueChange={setSelectedCountry} required>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {allowedCountries.map((country) => (
+                              <SelectItem key={country.code} value={country.code}>
+                                {country.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </form>
@@ -229,6 +240,56 @@ const Checkout = () => {
                       <Label htmlFor="billing" className="text-sm">
                         Billing address is the same as shipping address
                       </Label>
+                    </div>
+
+                    {/* Billing Address (only show if checkbox is unchecked) */}
+                    <div id="billingAddress" className="space-y-4 pt-4 border-t hidden">
+                      <h3 className="text-lg font-medium">Billing Address</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="billingFirstName">First Name</Label>
+                          <Input id="billingFirstName" type="text" />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingLastName">Last Name</Label>
+                          <Input id="billingLastName" type="text" />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="billingAddress">Street Address</Label>
+                        <Input id="billingAddress" type="text" />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                          <Label htmlFor="billingCity">City</Label>
+                          <Input id="billingCity" type="text" />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingState">State/Province</Label>
+                          <Input id="billingState" type="text" placeholder="e.g., Lagos, Dubai, Accra" />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingZip">ZIP/Postal Code</Label>
+                          <Input id="billingZip" type="text" />
+                        </div>
+                        <div>
+                          <Label htmlFor="billingCountry">Country</Label>
+                          <Select defaultValue={selectedCountry}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Country" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {allowedCountries.map((country) => (
+                                <SelectItem key={country.code} value={country.code}>
+                                  {country.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                     </div>
                   </form>
                 </div>
