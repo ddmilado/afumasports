@@ -51,6 +51,14 @@ const categories = [
     image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=300&fit=crop",
     productCount: 356,
     slug: "exhaust"
+  },
+  {
+    id: 7,
+    name: "Auto Care",
+    description: "Car wash, wax, cleaners, and detailing products",
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+    productCount: 8,
+    slug: "auto-care"
   }
 ];
 

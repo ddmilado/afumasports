@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,8 +72,8 @@ const Products = () => {
     return matches;
   }) || [];
 
-  const categories = ['Engine', 'Brakes', 'Suspension', 'Electrical', 'Tires'];
-  const brands = ['AcmeParts', 'FlowMax', 'RideControl', 'BrightTech', 'PureTech', 'PowerFlow', 'StopMax', 'GripTech'];
+  const categories = ['Engine', 'Brakes', 'Suspension', 'Electrical', 'Tires', 'Auto Care'];
+  const brands = ['AcmeParts', 'FlowMax', 'RideControl', 'BrightTech', 'PureTech', 'PowerFlow', 'StopMax', 'GripTech', 'CleanMax', 'DetailPro', 'GlossTech', 'ClearView', 'LuxeLeather', 'PowerClean', 'ShineGuard'];
 
   const handleCategoryChange = (category: string, checked: boolean) => {
     if (checked) {

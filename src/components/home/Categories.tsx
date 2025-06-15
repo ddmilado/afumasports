@@ -44,11 +44,11 @@ const categories = [
   },
   {
     id: 6,
-    name: "Cooling System",
-    description: "Radiators, hoses & thermostats",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop",
-    href: "/categories/cooling",
-    itemCount: 312
+    name: "Auto Care",
+    description: "Car wash, wax, cleaners & detailing",
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+    href: "/categories/auto-care",
+    itemCount: 8
   }
 ];
 
