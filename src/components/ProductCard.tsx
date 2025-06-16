@@ -97,7 +97,7 @@ const ProductCard = ({ id, name, brand, partNumber, price, originalPrice, image,
           <Button
             onClick={handleAddToCart}
             disabled={!inStock}
-            className="w-full bg-slate-500 hover:bg-slate-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
             {inStock ? "Add to Cart" : "Out of Stock"}

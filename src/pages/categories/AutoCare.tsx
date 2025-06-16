@@ -136,7 +136,7 @@ const AutoCare = () => {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
-                      className="w-full bg-slate-500 hover:bg-slate-600 text-white"
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                       disabled={!product.in_stock}
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />

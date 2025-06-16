@@ -78,21 +78,23 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12 pt-32">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-xl text-gray-600">
+      <main className="relative container mx-auto px-4 py-16 md:py-24 z-10">
+        <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}></div>
+        <div className="relative z-20">
+        <div className="text-center mb-12 md:mb-16">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">Contact Us</h1>
+          <p className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto">
             Have questions? We're here to help. Reach out to our team of automotive experts.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Send us a Message</h2>
+          <div className="bg-white rounded-lg shadow-xl p-8 md:p-10">
+            <h2 className="text-3xl font-bold text-slate-800 mb-8 border-b-2 border-orange-500 pb-3">Send us a Message</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -103,6 +105,7 @@ const Contact = () => {
                     type="text" 
                     value={formData.firstName}
                     onChange={handleInputChange}
+                    className="focus:border-orange-500 focus:ring-orange-500"
                     required 
                   />
                 </div>
@@ -114,6 +117,7 @@ const Contact = () => {
                     type="text" 
                     value={formData.lastName}
                     onChange={handleInputChange}
+                    className="focus:border-orange-500 focus:ring-orange-500"
                     required 
                   />
                 </div>
@@ -127,6 +131,7 @@ const Contact = () => {
                   type="email" 
                   value={formData.email}
                   onChange={handleInputChange}
+                  className="focus:border-orange-500 focus:ring-orange-500"
                   required 
                 />
               </div>
@@ -139,6 +144,7 @@ const Contact = () => {
                   type="tel" 
                   value={formData.phone}
                   onChange={handleInputChange}
+                  className="focus:border-orange-500 focus:ring-orange-500"
                 />
               </div>
               
@@ -149,7 +155,7 @@ const Contact = () => {
                   name="subject"
                   value={formData.subject}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 >
                   <option>General Inquiry</option>
                   <option>Order Support</option>
@@ -168,13 +174,14 @@ const Contact = () => {
                   value={formData.message}
                   onChange={handleInputChange}
                   placeholder="Tell us how we can help..."
+                  className="focus:border-orange-500 focus:ring-orange-500"
                   required
                 />
               </div>
               
               <Button 
                 type="submit"
-                className="w-full bg-slate-500 hover:bg-slate-600"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-md shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-0.5"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
@@ -184,12 +191,12 @@ const Contact = () => {
 
           {/* Contact Information */}
           <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Get in Touch</h2>
+            <div className="bg-white rounded-lg shadow-xl p-8 md:p-10">
+              <h2 className="text-3xl font-bold text-slate-800 mb-8 border-b-2 border-orange-500 pb-3">Get in Touch</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <MapPin className="w-6 h-6 text-slate-500 mt-1" />
+                  <MapPin className="w-6 h-6 text-orange-500 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
                     <p className="text-gray-600">
@@ -201,7 +208,7 @@ const Contact = () => {
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Phone className="w-6 h-6 text-slate-500 mt-1" />
+                  <Phone className="w-6 h-6 text-orange-500 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
                     <p className="text-gray-600">+971-55-288-0435</p>
@@ -210,7 +217,7 @@ const Contact = () => {
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Mail className="w-6 h-6 text-slate-500 mt-1" />
+                  <Mail className="w-6 h-6 text-orange-500 mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
                     <p className="text-gray-600">support@auronauto.com</p>
@@ -219,9 +226,9 @@ const Contact = () => {
                 </div>
                 
                 <div className="flex items-start space-x-4">
-                  <Clock className="w-6 h-6 text-slate-500 mt-1" />
+                  <Clock className="w-6 h-6 text-orange-500 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Business Hours</h3>
+                    <h3 className="font-bold text-gray-900 text-lg">Working Hours</h3>
                     <p className="text-gray-600">
                       Sunday - Thursday: 9:00 AM - 7:00 PM GST<br />
                       Friday: 2:00 PM - 7:00 PM GST<br />
@@ -233,25 +240,26 @@ const Contact = () => {
             </div>
 
             {/* FAQ Quick Links */}
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Help</h3>
-              <div className="space-y-3">
-                <a href="/faq" className="block text-slate-500 hover:text-slate-600">
-                  → Frequently Asked Questions
+            <div className="bg-white rounded-xl shadow-xl p-8 md:p-10 transition-transform duration-300 hover:scale-[1.02]">
+              <h2 className="text-3xl font-bold text-slate-800 mb-8 border-b-2 border-orange-500 pb-3">Quick Help</h2>
+              <div className="space-y-4">
+                <a href="/faq" className="block text-slate-700 hover:text-orange-600 font-medium text-lg group transition-all duration-300 ease-in-out">
+                  → <span className="group-hover:underline group-hover:ml-1 transition-all duration-300 ease-in-out">Frequently Asked Questions</span>
                 </a>
-                <a href="/shipping" className="block text-slate-500 hover:text-slate-600">
-                  → Shipping Information
+                <a href="/shipping" className="block text-slate-700 hover:text-orange-600 font-medium text-lg group transition-all duration-300 ease-in-out">
+                  → <span className="group-hover:underline group-hover:ml-1 transition-all duration-300 ease-in-out">Shipping Information</span>
                 </a>
-                <a href="/returns" className="block text-slate-500 hover:text-slate-600">
-                  → Returns & Exchanges
+                <a href="/returns" className="block text-slate-700 hover:text-orange-600 font-medium text-lg group transition-all duration-300 ease-in-out">
+                  → <span className="group-hover:underline group-hover:ml-1 transition-all duration-300 ease-in-out">Returns & Exchanges</span>
                 </a>
-                <a href="/warranty" className="block text-slate-500 hover:text-slate-600">
-                  → Warranty Information
+                <a href="/warranty" className="block text-slate-700 hover:text-orange-600 font-medium text-lg group transition-all duration-300 ease-in-out">
+                  → <span className="group-hover:underline group-hover:ml-1 transition-all duration-300 ease-in-out">Warranty Information</span>
                 </a>
               </div>
             </div>
           </div>
         </div>
+        </div> {/* Closes div.relative.z-20 */}
       </main>
 
       <Footer />

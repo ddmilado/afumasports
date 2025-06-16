@@ -53,9 +53,15 @@ const Hero = () => {
   }, [selectedMake]);
 
   // Reset model when year changes
+  // Reset model when make changes
   useEffect(() => {
-    setSelectedYear("");
-  }, [selectedYear]);
+    setSelectedModel("");
+  }, [selectedMake]);
+
+  // Reset year and model when year changes (This useEffect was causing the year selection issue)
+  // useEffect(() => {
+  //   setSelectedYear("");
+  // }, [selectedYear]);
 
   const getAvailableModels = () => {
     if (!selectedMake) return [];
@@ -108,7 +114,7 @@ const Hero = () => {
       
       <div className="relative container mx-auto px-4 pt-44 pb-20 text-center">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Find the <span className="text-blue-600">Perfect Parts</span><br />
+          Find the <span className="text-orange-500">Perfect Parts</span><br />
           for Your Vehicle
         </h1>
         <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
@@ -152,7 +158,7 @@ const Hero = () => {
               ))}
             </select>
             <Button 
-              className="bg-slate-500 hover:bg-slate-600 text-white font-semibold py-3"
+              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
               onClick={handleFindParts}
             >
               <Search className="w-4 h-4 mr-2" />
@@ -164,7 +170,7 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
-            className="bg-slate-500 hover:bg-slate-600 text-white font-semibold px-8 py-3"
+            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3"
             onClick={handleShopNow}
           >
             Shop Now
@@ -172,7 +178,7 @@ const Hero = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="border-white text-white hover:bg-white hover:text-slate-900 px-8 py-3"
+            className="border-white text-white bg-transparent hover:bg-white hover:text-slate-900 px-8 py-3"
             onClick={handleViewCatalog}
           >
             View Catalog
