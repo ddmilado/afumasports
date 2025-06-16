@@ -86,7 +86,7 @@ const Checkout = () => {
   };
 
   const handlePaymentSuccess = (orderId: string) => {
-    navigate(`/payment-success?order_id=${orderId}`);
+    navigate(`/payment/success?order_id=${orderId}`);
   };
 
   return (
