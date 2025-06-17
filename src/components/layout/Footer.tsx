@@ -72,26 +72,26 @@ const Footer = () => {
 
   return (
     <footer className="bg-slate-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div>
+          <div className="mb-6 md:mb-0">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="relative w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-slate-500 rounded-full"></div>
+              <div className="relative w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Zap className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-slate-500 rounded-full"></div>
               </div>
               <div>
-                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h3 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Auron Auto
                 </h3>
               </div>
             </div>
-            <p className="text-white mb-4">
+            <p className="text-sm text-white mb-4">
               Your trusted source for premium automotive parts and cutting-edge solutions. 
               Innovation meets reliability since 2020.
             </p>
-            <div className="text-sm text-white">
+            <div className="text-xs md:text-sm text-white space-y-1">
               <p>📞 +971-55-288-0435</p>
               <p>✉️ support@auronauto.com</p>
               <p>📍 Dubai Marina, Dubai, United Arab Emirates</p>
@@ -99,9 +99,9 @@ const Footer = () => {
           </div>
           
           {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
-            <ul className="space-y-2 text-white">
+          <div className="mb-6 md:mb-0">
+            <h4 className="text-base md:text-lg font-semibold mb-4 text-white">Quick Links</h4>
+            <ul className="space-y-2 text-sm text-white">
               <li><Link to="/products" className="hover:text-blue-400 transition-colors">All Products</Link></li>
               <li><Link to="/categories" className="hover:text-blue-400 transition-colors">Categories</Link></li>
               <li><Link to="/brands" className="hover:text-blue-400 transition-colors">Brands</Link></li>
@@ -111,9 +111,9 @@ const Footer = () => {
           </div>
           
           {/* Customer Service */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Customer Service</h4>
-            <ul className="space-y-2 text-white">
+          <div className="mb-6 md:mb-0">
+            <h4 className="text-base md:text-lg font-semibold mb-4 text-white">Customer Service</h4>
+            <ul className="space-y-2 text-sm text-white">
               <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Contact Us</Link></li>
               <li><Link to="/shipping" className="hover:text-blue-400 transition-colors">Shipping Info</Link></li>
               <li><Link to="/returns" className="hover:text-blue-400 transition-colors">Returns & Exchanges</Link></li>
@@ -124,23 +124,23 @@ const Footer = () => {
           
           {/* Newsletter */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Stay Connected</h4>
-            <p className="text-white mb-4">
+            <h4 className="text-base md:text-lg font-semibold mb-4 text-white">Stay Connected</h4>
+            <p className="text-sm text-white mb-4">
               Get the latest deals, innovations, and automotive solutions delivered to your inbox.
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex">
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row">
               <input
                 type="email"
                 placeholder="Your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-l-md focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-md sm:rounded-l-md sm:rounded-r-none focus:outline-none focus:border-blue-500 disabled:opacity-50 mb-2 sm:mb-0 text-sm"
               />
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-r-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md sm:rounded-r-md sm:rounded-l-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {isLoading ? "..." : "Subscribe"}
               </button>
@@ -148,18 +148,18 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-slate-700 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-white text-sm">
-            © 2024 Auron Autospace. All rights reserved.
+        <div className="border-t border-slate-700 mt-8 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between">
+          <p className="text-xs md:text-sm text-white mb-4 md:mb-0">
+            © 2025 Auron Autospace. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-white hover:text-blue-400 text-sm transition-colors">
+          <div className="flex space-x-4 md:space-x-6 mt-4 md:mt-0">
+            <Link to="/privacy" className="text-xs md:text-sm text-white hover:text-blue-400 transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-white hover:text-blue-400 text-sm transition-colors">
+            <Link to="/terms" className="text-xs md:text-sm text-white hover:text-blue-400 transition-colors">
               Terms of Service
             </Link>
-            <Link to="/sitemap" className="text-white hover:text-blue-400 text-sm transition-colors">
+            <Link to="/sitemap" className="text-xs md:text-sm text-white hover:text-blue-400 transition-colors">
               Sitemap
             </Link>
           </div>

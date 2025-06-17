@@ -3,11 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { SessionTimeoutWarning } from "@/components/security/SessionTimeoutWarning";
 import { useSecureAuth } from "@/hooks/useSecureAuth";
+import Header from "@/components/layout/Header"; // Added import for Header
+import Footer from "@/components/layout/Footer"; // Added import for Footer
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -43,10 +45,9 @@ const AppContent = () => {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/products" element={<Products />} />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
@@ -73,7 +74,6 @@ const AppContent = () => {
           <Route path="/payment/crypto" element={<CryptoPayment />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
 
       <SessionTimeoutWarning
         isOpen={sessionTimeoutWarning}
@@ -88,12 +88,22 @@ const AppContent = () => {
 };
 
 function App() {
+  const location = useLocation();
+  const noHeaderFooterPaths = ['/auth'];
+  const shouldShowHeaderFooter = !noHeaderFooterPaths.includes(location.pathname);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
           <CartProvider>
-            <AppContent />
+            <div className="flex flex-col min-h-screen bg-background text-foreground">
+                {shouldShowHeaderFooter && <Header />}
+                <main className={`flex-grow ${shouldShowHeaderFooter ? 'pt-28 pb-16' : ''}`}> {/* Added pt-28 to account for fixed header height, pb-16 for footer */}
+                  <AppContent />
+                </main>
+                {shouldShowHeaderFooter && <Footer />}
+              </div>
           </CartProvider>
         </AuthProvider>
       </TooltipProvider>

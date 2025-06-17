@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    // mode === 'development' &&
+    // componentTagger(), // Temporarily disabled due to CSP unsafe-eval issue
   ].filter(Boolean),
   resolve: {
     alias: {
