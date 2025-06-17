@@ -104,9 +104,9 @@ const Hero = () => {
     <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Hero background image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&h=1080&fit=crop&q=80')",
+          backgroundImage: "url('https://res.cloudinary.com/dzh8mryxw/image/upload/v1750175594/tim-mossholder-7jbs8DuQ4vc-unsplash_peeic6.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/50"></div>
@@ -114,12 +114,12 @@ const Hero = () => {
       
       <div className="relative container mx-auto px-4 pt-10 pb-20 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
-          Find the <span className="text-orange-500">Perfect Parts</span><br />
-          for Your Vehicle
+          Your Premier Source for <span className="text-orange-500">Automotive Spare Parts</span><br />
+          Wholesale & Retail Solutions
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-8 max-w-3xl mx-auto">
-          Premium automotive parts from trusted brands. Quality guaranteed, fast shipping, 
-          and expert support to keep your vehicle running at its best.
+          Specializing in high-quality automotive spare parts for wholesale distributors and individual vehicle owners. 
+          Extensive catalog, competitive pricing, and reliable delivery to keep the world moving.
         </p>
         
         {/* Vehicle search form */}

@@ -88,8 +88,9 @@ const AppContent = () => {
 };
 
 function App() {
+
   const location = useLocation();
-  const noHeaderFooterPaths = ['/auth'];
+  const noHeaderFooterPaths = ['/auth', '/payment/success'];
   const shouldShowHeaderFooter = !noHeaderFooterPaths.includes(location.pathname);
 
   return (

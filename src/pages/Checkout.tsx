@@ -9,11 +9,11 @@ import { CreditCard, Lock, Truck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 import PaymentMethods from "@/components/PaymentMethods";
 
 const Checkout = () => {
+
   const { user, loading } = useAuth();
   const { state: cartState } = useCart();
   const navigate = useNavigate();
@@ -91,7 +91,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
@@ -312,7 +312,7 @@ const Checkout = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };
