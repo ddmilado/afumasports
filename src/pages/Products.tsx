@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, Grid, List, ShoppingCart } from "lucide-react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
 import FavoriteButton from "@/components/FavoriteButton";
@@ -116,7 +115,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
@@ -364,7 +363,7 @@ const Products = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

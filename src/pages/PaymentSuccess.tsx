@@ -4,8 +4,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +20,7 @@ const PaymentSuccess = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
@@ -86,7 +85,7 @@ const PaymentSuccess = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

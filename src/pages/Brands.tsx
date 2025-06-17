@@ -1,6 +1,4 @@
 
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
 
 const brands = [
@@ -57,7 +55,7 @@ const brands = [
 const Brands = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8 pt-32">
         <div className="text-center mb-12">
@@ -100,7 +98,7 @@ const Brands = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

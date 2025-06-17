@@ -1,6 +1,4 @@
 
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -60,7 +58,7 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
@@ -109,7 +107,7 @@ const FAQ = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

@@ -11,8 +11,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 
 const CryptoPayment = () => {
   const [searchParams] = useSearchParams();
@@ -110,7 +109,7 @@ const CryptoPayment = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
@@ -204,7 +203,7 @@ const CryptoPayment = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

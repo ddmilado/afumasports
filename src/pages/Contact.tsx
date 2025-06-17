@@ -1,7 +1,6 @@
 
 import { useState } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -79,7 +78,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header />
+
       
       <main className="relative container mx-auto px-4 py-16 md:py-24 z-10">
         <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}></div>
@@ -262,7 +261,7 @@ const Contact = () => {
         </div> {/* Closes div.relative.z-20 */}
       </main>
 
-      <Footer />
+
     </div>
   );
 };

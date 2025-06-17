@@ -1,7 +1,6 @@
 
 import { useState } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 import { Button } from "@/components/ui/button";
 import { Grid, List, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -37,7 +36,7 @@ const Suspension = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-sm text-gray-500 mb-6 pt-32">
@@ -156,7 +155,7 @@ const Suspension = () => {
         )}
       </main>
 
-      <Footer />
+
     </div>
   );
 };

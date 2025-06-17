@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 
 const Cart = () => {
   const { state: cartState, updateQuantity, removeItem } = useCart();
@@ -18,14 +17,14 @@ const Cart = () => {
   if (cartState.isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+  
         <main className="container mx-auto px-4 py-16 text-center">
           <div className="flex items-center justify-center space-x-2">
             <LoadingSpinner size="lg" />
             <span className="text-lg text-gray-600">Loading your cart...</span>
           </div>
         </main>
-        <Footer />
+
       </div>
     );
   }
@@ -33,7 +32,7 @@ const Cart = () => {
   if (cartState.items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+
         <main className="container mx-auto px-4 py-16 text-center">
           <div className="max-w-md mx-auto">
             <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -48,14 +47,14 @@ const Cart = () => {
             </Link>
           </div>
         </main>
-        <Footer />
+  
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-6">
@@ -179,7 +178,7 @@ const Cart = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };
