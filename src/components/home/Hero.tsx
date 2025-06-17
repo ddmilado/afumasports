@@ -113,11 +113,11 @@ const Hero = () => {
       </div>
       
       <div className="relative container mx-auto px-4 pt-10 pb-20 text-center">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
           Find the <span className="text-orange-500">Perfect Parts</span><br />
           for Your Vehicle
         </h1>
-        <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+        <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-8 max-w-3xl mx-auto">
           Premium automotive parts from trusted brands. Quality guaranteed, fast shipping, 
           and expert support to keep your vehicle running at its best.
         </p>
@@ -125,9 +125,9 @@ const Hero = () => {
         {/* Vehicle search form */}
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto mb-8">
           <h3 className="text-lg font-semibold mb-4">Find Parts for Your Vehicle</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500 w-full"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
             >
@@ -137,7 +137,7 @@ const Hero = () => {
               ))}
             </select>
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500 w-full"
               value={selectedMake}
               onChange={(e) => setSelectedMake(e.target.value)}
             >
@@ -147,7 +147,7 @@ const Hero = () => {
               ))}
             </select>
             <select 
-              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500"
+              className="px-4 py-3 rounded-md bg-white text-gray-900 border-0 focus:ring-2 focus:ring-slate-500 w-full"
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
               disabled={!selectedMake}
@@ -158,7 +158,7 @@ const Hero = () => {
               ))}
             </select>
             <Button 
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3"
+              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 w-full"
               onClick={handleFindParts}
             >
               <Search className="w-4 h-4 mr-2" />

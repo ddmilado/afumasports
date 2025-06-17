@@ -5,13 +5,15 @@ import { Search, ShoppingCart, User, Settings, LogIn, Zap } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef } from "react";
 
 const Header = () => {
   const { user } = useAuth();
   const { state: cartState } = useCart();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -48,7 +50,7 @@ const Header = () => {
           </Link>
           
           {/* Search bar */}
-          <div className="flex-1 w-full md:max-w-2xl md:mx-8 mb-4 md:mb-0 order-3 md:order-2">
+          <div className="flex-1 w-full md:max-w-2xl md:mx-8 mb-4 md:mb-0 order-3 md:order-2 hidden md:block">
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
@@ -68,6 +70,15 @@ const Header = () => {
           
           {/* Actions */}
           <div className="flex items-center space-x-2 md:space-x-4 order-2 md:order-3">
+            {/* Mobile Search Icon */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden text-white hover:text-blue-400"
+              onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+            >
+              <Search className="w-4 h-4 md:w-5 md:h-5" />
+            </Button>
             {user ? (
               <>
                 <Link to="/account">
@@ -112,6 +123,28 @@ const Header = () => {
           </div>
         </div>
         
+        {/* Mobile Search Input (conditionally rendered) */}
+        {isMobileSearchOpen && (
+          <div className="md:hidden px-4 pb-4">
+            <form onSubmit={handleSearch} className="relative">
+              <Input
+                type="text"
+                placeholder="Search parts..."
+                className="pl-10 pr-4 py-2 w-full bg-white/90 text-gray-900 border-0 focus:ring-2 focus:ring-blue-500 text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                ref={mobileSearchInputRef}
+              />
+              <button 
+                type="submit"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+        )}
+
         {/* Navigation - Hidden on small screens, burger menu could be added here */}
         <nav className="mt-4 pt-4 border-t border-slate-700/50 hidden md:block">
           <ul className="flex flex-wrap justify-center md:justify-start space-x-4 md:space-x-8 text-sm">
