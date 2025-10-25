@@ -1,4 +1,5 @@
 import ProductCard from "@/components/ProductCard";
+import { motion } from "framer-motion";
 
 const placeholderProducts = [
   {
@@ -35,6 +36,21 @@ const placeholderProducts = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+};
+
 const FeaturedProducts = () => {
   return (
     <section className="py-20 bg-black text-white">
@@ -43,14 +59,22 @@ const FeaturedProducts = () => {
           <h2 className="text-4xl font-bold">Featured Collection</h2>
           <p className="text-lg text-gray-400 mt-2">Discover the art of performance</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+        >
           {placeholderProducts.map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <motion.div variants={itemVariants} key={product.id}>
+              <ProductCard {...product} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
 
 export default FeaturedProducts;
+

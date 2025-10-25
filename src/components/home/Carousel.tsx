@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
@@ -22,7 +22,6 @@ const slides = [
 const Carousel = () => {
   const [current, setCurrent] = useState(0);
 
-  const prev = () => setCurrent((current) => (current === 0 ? slides.length - 1 : current - 1));
   const next = () => setCurrent((current) => (current === slides.length - 1 ? 0 : current + 1));
 
   useEffect(() => {
@@ -32,20 +31,42 @@ const Carousel = () => {
 
   return (
     <div className="relative h-screen overflow-hidden">
-      <div
-        className="flex transition-transform ease-out duration-500"
-        style={{ transform: `translateX(-${current * 100}%)` }}
-      >
-        {slides.map((slide, i) => (
-          <div className="w-full flex-shrink-0 relative" key={i}>
-            <img src={slide.image} className="w-full h-screen object-cover" />
-            <div className="absolute inset-0 bg-black opacity-50"></div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-              <h1 className="text-4xl md:text-6xl font-bold">{slide.headline}</h1>
-              <p className="mt-4 text-lg md:text-xl">{slide.subheadline}</p>
-            </div>
-          </div>
-        ))}
+      <AnimatePresence>
+        <motion.div
+          key={current}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+        >
+          <img src={slides[current].image} className="w-full h-screen object-cover" />
+          <div className="absolute inset-0 bg-black opacity-50"></div>
+        </motion.div>
+      </AnimatePresence>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+        <AnimatePresence>
+          <motion.h1
+            key={current}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-4xl md:text-6xl font-bold"
+          >
+            {slides[current].headline}
+          </motion.h1>
+          <motion.p
+            key={current + '_sub'}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-4 text-lg md:text-xl"
+          >
+            {slides[current].subheadline}
+          </motion.p>
+        </AnimatePresence>
       </div>
 
       <div className="absolute bottom-4 right-0 left-0">
