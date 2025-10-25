@@ -41,7 +41,16 @@ import AutoCare from "./pages/categories/AutoCare";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const { session, loading } = useAuth();
   const { sessionTimeoutWarning, extendSession, secureSignOut } = useSecureAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-2xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>
